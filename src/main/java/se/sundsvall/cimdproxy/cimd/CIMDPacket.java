@@ -1,5 +1,7 @@
 package se.sundsvall.cimdproxy.cimd;
 
+import static java.util.Objects.isNull;
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -56,6 +58,9 @@ public class CIMDPacket {
 				cb = decoder.decode(ByteBuffer.wrap(encHex));
 			} catch (DecoderException | CharacterCodingException e) {
 				LOG.info("Failed to decode user data: " + userDataBinary, e);
+			}
+			if (isNull(cb)) {
+				return "";
 			}
 			return new String(cb.array());
 		}

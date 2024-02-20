@@ -31,8 +31,9 @@ class TextMessageUserDataFactoryTest {
 	@Test
 	public void createsGsm7BitEncodedUserData() throws Exception {
 		final UserData[] uds = TextMessageUserDataFactory.newInstance("abc123 {curly}[square] brackets \u00FC");
-		assertThat(uds).isNotNull();
-		assertThat(uds).hasSize(1);
+		assertThat(uds)
+			.isNotNull()
+			.hasSize(1);
 
 		final UserData ud = uds[0];
 		assertThat(ud).isNotNull();

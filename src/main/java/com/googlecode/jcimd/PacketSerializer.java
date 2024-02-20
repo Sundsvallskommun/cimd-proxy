@@ -1,18 +1,18 @@
 /*
  * Copyright 2010-2011 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package com.googlecode.jcimd;
 
@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * Serializes/deserializes CIMD packets in the following format:
  * </p>
+ *
  * <pre>
  *   HEADER         Parameter List             TRAILER
  * &lt;STX&gt;ZZ:NNN&lt;TAB&gt;PPP:Parameter value&lt;TAB&gt;...CC&lt;ETX&gt;
@@ -56,10 +57,10 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * To protect against buffer overflow, this class uses a {@link #setMaxMessageSize(int)
  * maximum message size} which defaults to 4096 (1024 * 4) bytes.
- * 
+ *
  * @author Lorenzo Dee
  *
- * @see #setSequenceNumberGenerator(PacketSequenceNumberGenerator)
+ * @see    #setSequenceNumberGenerator(PacketSequenceNumberGenerator)
  */
 public class PacketSerializer {
 
@@ -75,10 +76,10 @@ public class PacketSerializer {
 	private final Log logger;
 	private static final Log clLogger = LogFactory.getLog(PacketSerializer.class);
 
-	private final boolean useChecksum; 
+	private final boolean useChecksum;
 	private int maxMessageSize = DEFAULT_MAX_SIZE;
 
-	private PacketSequenceNumberGenerator sequenceNumberGenerator; 
+	private PacketSequenceNumberGenerator sequenceNumberGenerator;
 
 	/**
 	 * Constructs a serializer that uses and expects a two-byte checksum.
@@ -90,6 +91,7 @@ public class PacketSerializer {
 	/**
 	 * Constructs a serializer with the given name that uses
 	 * and expects a two-byte checksum.
+	 *
 	 * @param name name of this serializer (used in logging)
 	 */
 	public PacketSerializer(String name) {
@@ -99,7 +101,8 @@ public class PacketSerializer {
 	/**
 	 * Constructs a serializer with the given name that will use
 	 * two-byte checksum based on flag.
-	 * @param name name of this serializer (used in logging)
+	 *
+	 * @param name        name of this serializer (used in logging)
 	 * @param useChecksum flag to indicate to use checksum
 	 */
 	public PacketSerializer(String name, boolean useChecksum) {
@@ -118,7 +121,7 @@ public class PacketSerializer {
 	public void setMaxMessageSize(int maxMessageSize) {
 		if (maxMessageSize <= 0) {
 			throw new IllegalArgumentException(
-					"maxMessageSize must be greater than zero");
+				"maxMessageSize must be greater than zero");
 		}
 		this.maxMessageSize = maxMessageSize;
 	}
@@ -128,67 +131,67 @@ public class PacketSerializer {
 	}
 
 	public void setSequenceNumberGenerator(
-			PacketSequenceNumberGenerator sequenceNumberGenerator) {
+		PacketSequenceNumberGenerator sequenceNumberGenerator) {
 		this.sequenceNumberGenerator = sequenceNumberGenerator;
 	}
 
-	 public void serialize(Packet packet, OutputStream outputStream)
-	      throws IOException {
-	   doSerializePacket(packet, sequenceNumberGenerator, useChecksum, logger, outputStream);
-	 }
-	 
-  public static void serializePacket(Packet packet, PacketSequenceNumberGenerator sequenceNumberGenerator, boolean useChecksum, OutputStream outputStream)
-      throws IOException {
-    doSerializePacket(packet, sequenceNumberGenerator, useChecksum, clLogger, outputStream);
-  }
-  
+	public void serialize(Packet packet, OutputStream outputStream)
+		throws IOException {
+		doSerializePacket(packet, sequenceNumberGenerator, useChecksum, logger, outputStream);
+	}
+
+	public static void serializePacket(Packet packet, PacketSequenceNumberGenerator sequenceNumberGenerator, boolean useChecksum, OutputStream outputStream)
+		throws IOException {
+		doSerializePacket(packet, sequenceNumberGenerator, useChecksum, clLogger, outputStream);
+	}
+
 	private static void doSerializePacket(Packet packet, PacketSequenceNumberGenerator sequenceNumberGenerator, boolean useChecksum, Log logger, OutputStream outputStream)
-			throws IOException {
+		throws IOException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Sending " + packet);
 		}
-		byte[] bytes = serializeToByteArray(packet, sequenceNumberGenerator, logger);
+		final byte[] bytes = serializeToByteArray(packet, sequenceNumberGenerator, logger);
 		outputStream.write(bytes);
 		if (useChecksum) {
-			int checkSum = calculateCheckSum(bytes);
+			final int checkSum = calculateCheckSum(bytes);
 			AsciiUtils.writeIntAsHexAsciiBytes(checkSum, outputStream, 2);
 		}
 		outputStream.write(ETX);
 	}
 
 	private static byte[] serializeToByteArray(Packet packet, PacketSequenceNumberGenerator sequenceNumberGenerator, Log logger) throws IOException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(STX);
 		AsciiUtils.writeIntAsAsciiBytes(
-				packet.getOperationCode(), outputStream, 2);
+			packet.getOperationCode(), outputStream, 2);
 		outputStream.write(COLON);
 		Integer sequenceNumber = packet.getSequenceNumber();
 		if (sequenceNumber == null) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("No sequence number in packet, generating one...");
 			}
-			if (sequenceNumberGenerator != null) {
-				sequenceNumber = sequenceNumberGenerator.nextSequence();
-				if (logger.isTraceEnabled()) {
-					logger.trace("Generated " + sequenceNumber + " as sequence number");
-				}
-			} else {
-				String message = "No sequence number generator. " +
-						"Please see PacketSerializer#setSequenceNumberGenerator(" +
-						"PacketSequenceNumberGenerator)";
+			if (sequenceNumberGenerator == null) {
+				final String message = """
+					No sequence number generator.\s\
+					Please see PacketSerializer#setSequenceNumberGenerator(\
+					PacketSequenceNumberGenerator)""";
 				logger.error(message);
 				throw new IOException(message);
 			}
+			sequenceNumber = sequenceNumberGenerator.nextSequence();
+			if (logger.isTraceEnabled()) {
+				logger.trace("Generated " + sequenceNumber + " as sequence number");
+			}
 		}
 		AsciiUtils.writeIntAsAsciiBytes(
-				sequenceNumber, outputStream, 3);
+			sequenceNumber, outputStream, 3);
 		outputStream.write(TAB);
-		for (Parameter parameter : packet.getParameters()) {
+		for (final Parameter parameter : packet.getParameters()) {
 			AsciiUtils.writeIntAsAsciiBytes(
-					parameter.getNumber(), outputStream, 3);
+				parameter.getNumber(), outputStream, 3);
 			outputStream.write(COLON);
 			AsciiUtils.writeStringAsAsciiBytes(
-					parameter.getValue(), outputStream);
+				parameter.getValue(), outputStream);
 			outputStream.write(TAB);
 		}
 		return outputStream.toByteArray();
@@ -197,8 +200,8 @@ public class PacketSerializer {
 	/**
 	 * Calculates the check sum of the given bytes.
 	 *
-	 * @param bytes the array from which a check sum is calculated
-	 * @return the check sum
+	 * @param  bytes the array from which a check sum is calculated
+	 * @return       the check sum
 	 */
 	private static int calculateCheckSum(byte[] bytes) {
 		return calculateCheckSum(bytes, 0, bytes.length);
@@ -207,11 +210,11 @@ public class PacketSerializer {
 	/**
 	 * Calculates the check sum of the given range of bytes.
 	 *
-	 * @param bytes the array from which a check sum is calculated
-	 * @param from the initial index of the range to be copied, inclusive
-	 * @param to the final index of the range to be copied, exclusive.
-	 *     (This index may lie outside the array.)
-	 * @return the check sum
+	 * @param  bytes the array from which a check sum is calculated
+	 * @param  from  the initial index of the range to be copied, inclusive
+	 * @param  to    the final index of the range to be copied, exclusive.
+	 *               (This index may lie outside the array.)
+	 * @return       the check sum
 	 */
 	private static int calculateCheckSum(byte[] bytes, int from, int to) {
 		int sum = 0;
@@ -223,15 +226,15 @@ public class PacketSerializer {
 	}
 
 	public Packet deserialize(InputStream inputStream) throws IOException {
-	  return doDeserializePacket(inputStream, getMaxMessageSize(), useChecksum, logger);
+		return doDeserializePacket(inputStream, getMaxMessageSize(), useChecksum, logger);
 	}
-	
+
 	public static Packet deserializePacket(InputStream inputStream, boolean useChecksum) throws IOException {
-	  return doDeserializePacket(inputStream, DEFAULT_MAX_SIZE, useChecksum, clLogger);
+		return doDeserializePacket(inputStream, DEFAULT_MAX_SIZE, useChecksum, clLogger);
 	}
-	
+
 	private static Packet doDeserializePacket(InputStream inputStream, int maxMessageSize, boolean useChecksum, Log logger) throws IOException {
-		ByteArrayOutputStream temp = new ByteArrayOutputStream();
+		final ByteArrayOutputStream temp = new ByteArrayOutputStream();
 		int b;
 		while ((b = inputStream.read()) != END_OF_STREAM) {
 			// Any data transmitted between packets SHALL be ignored.
@@ -241,7 +244,7 @@ public class PacketSerializer {
 			}
 		}
 		if (b != STX) {
-			//throw new SoftEndOfStreamException();
+			// throw new SoftEndOfStreamException();
 			throw new IOException(
 				"End of stream reached and still no <STX> byte");
 		}
@@ -254,18 +257,18 @@ public class PacketSerializer {
 			if (temp.size() >= maxMessageSize) {
 				// Protect from buffer overflow
 				throw new IOException(
-						"Buffer overflow reached at " + temp.size()
+					"Buffer overflow reached at " + temp.size()
 						+ " byte(s) and still no <ETX> byte");
 			}
 		}
 		if (b != ETX) {
 			throw new IOException(
-					"End of stream reached and still no <ETX> byte");
+				"End of stream reached and still no <ETX> byte");
 		}
 
 		// Parse contents of "temp" (it contains the entire CIMD message
 		// including STX and ETX bytes).
-		byte bytes[] = temp.toByteArray();
+		final byte bytes[] = temp.toByteArray();
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Received " + bytes.length + " byte(s)");
@@ -273,26 +276,26 @@ public class PacketSerializer {
 
 		if (useChecksum) {
 			// Read two (2) bytes, just before the ETX byte.
-			StringBuilder buffer = new StringBuilder(2);
+			final StringBuilder buffer = new StringBuilder(2);
 			buffer.append((char) bytes[bytes.length - 3]);
 			buffer.append((char) bytes[bytes.length - 2]);
 			try {
-				int checksum = Integer.valueOf(buffer.toString(), 16);
-				int expectedChecksum = calculateCheckSum(bytes, 0, bytes.length - 3);
+				final int checksum = Integer.valueOf(buffer.toString(), 16);
+				final int expectedChecksum = calculateCheckSum(bytes, 0, bytes.length - 3);
 				if (checksum != expectedChecksum) {
 					throw new IOException(
-							"Checksum error: expecting " + expectedChecksum
+						"Checksum error: expecting " + expectedChecksum
 							+ " but got " + checksum);
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				throw new IOException(
-						"Checksum error: expecting HEX digits, but got " + buffer);
+					"Checksum error: expecting HEX digits, but got " + buffer);
 			}
 		}
 
 		// Deserialize bytes, minus STX, CC (check sum), and ETX.
-		int end = useChecksum ? bytes.length - 3 : bytes.length - 1;
-		Packet packet = deserializeFromByteArray(bytes, 1, end);
+		final int end = useChecksum ? bytes.length - 3 : bytes.length - 1;
+		final Packet packet = deserializeFromByteArray(bytes, 1, end);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Received " + packet);
 		}
@@ -300,32 +303,32 @@ public class PacketSerializer {
 	}
 
 	private static Packet deserializeFromByteArray(
-			byte[] bytes, int from, int to) throws IOException {
-		StringBuilder buffer = new StringBuilder();
+		byte[] bytes, int from, int to) throws IOException {
+		final StringBuilder buffer = new StringBuilder();
 		int i = from;
 
 		// Read the operation code and packet number
 		i = readToBufferUntil(bytes, i, to, 2, buffer, COLON);
-		int operationCode = Integer.valueOf(buffer.toString());
+		final int operationCode = Integer.parseInt(buffer.toString());
 		buffer.setLength(0);
 		i = readToBufferUntil(bytes, i, to, -1, buffer, TAB);
-		int sequenceNumber = Integer.valueOf(buffer.toString());
+		final int sequenceNumber = Integer.parseInt(buffer.toString());
 		buffer.setLength(0);
 
 		// Read the parameters
-		List<Parameter> parameters = new LinkedList<>();
+		final List<Parameter> parameters = new LinkedList<>();
 		while (i < to) {
 			i = readToBufferUntil(bytes, i, to, 3, buffer, COLON);
-			int parameterType = Integer.valueOf(buffer.toString());
+			final int parameterType = Integer.parseInt(buffer.toString());
 			buffer.setLength(0);
 			i = readToBufferUntil(bytes, i, to, -1, buffer, TAB);
-			String parameterValue = buffer.toString();
+			final String parameterValue = buffer.toString();
 			buffer.setLength(0);
 			parameters.add(new Parameter(parameterType, parameterValue));
 		}
 
 		return new Packet(operationCode, sequenceNumber,
-				parameters.toArray(new Parameter[0]));
+			parameters.toArray(new Parameter[0]));
 	}
 
 	/**
@@ -334,46 +337,45 @@ public class PacketSerializer {
 	 * The reserved characters 0x00 (NUL), 0x02 (STX), 0x03 (ETX), 0x09
 	 * (TAB) are not allowed in any parameter.
 	 *
-	 * @param bytes the array of bytes to read
-	 * @param from the initial index of the range to be read, inclusive
-	 * @param to the final index of the range to be read, exclusive.
-	 *     (This index may lie outside the array.)
-	 * @param maxOffset the maximum offset that can be read before reaching
-	 *     delimiter. If this offset is exceeded, and no delimiter was
-	 *     reached, an exception will be thrown.
-	 * @param buffer the buffer to append to
-	 * @param delimiter the delimiter to reach
-	 * @return the index (between <em>from</em> and <em>to</em>)
-	 *     when the delimiter was reached
+	 * @param  bytes       the array of bytes to read
+	 * @param  from        the initial index of the range to be read, inclusive
+	 * @param  to          the final index of the range to be read, exclusive.
+	 *                     (This index may lie outside the array.)
+	 * @param  maxOffset   the maximum offset that can be read before reaching
+	 *                     delimiter. If this offset is exceeded, and no delimiter was
+	 *                     reached, an exception will be thrown.
+	 * @param  buffer      the buffer to append to
+	 * @param  delimiter   the delimiter to reach
+	 * @return             the index (between <em>from</em> and <em>to</em>)
+	 *                     when the delimiter was reached
 	 * @throws IOException if a reserved character was reached, and it is
-	 *     not the expected <em>delimiter</em>.
+	 *                     not the expected <em>delimiter</em>.
 	 */
 	private static int readToBufferUntil(
-			byte[] bytes, int from, int to, int maxOffset,
-			StringBuilder buffer, byte delimiter)
-	throws IOException {
+		byte[] bytes, int from, int to, int maxOffset,
+		StringBuilder buffer, byte delimiter)
+		throws IOException {
 		int i = from;
 		while ((i < to) && (bytes[i] != delimiter)
-				// The reserved characters 0x00 (NUL), 0x02 (STX),
-				// 0x03 (ETX), 0x09 (TAB) are not allowed in any parameter
-				&& (bytes[i] != NUL) && (bytes[i] != STX)
-				&& (bytes[i] != ETX) && (bytes[i] != TAB)) {
+		// The reserved characters 0x00 (NUL), 0x02 (STX),
+		// 0x03 (ETX), 0x09 (TAB) are not allowed in any parameter
+			&& (bytes[i] != NUL) && (bytes[i] != STX)
+			&& (bytes[i] != ETX) && (bytes[i] != TAB)) {
 			buffer.append((char) bytes[i]);
 			i++;
 			if ((maxOffset > 0) && ((i - from) > maxOffset)) {
 				throw new IOException(
-						"Expecting 0x" + Integer.toHexString(delimiter)
+					"Expecting 0x" + Integer.toHexString(delimiter)
 						+ " within " + maxOffset + " byte(s), " +
-								"but got 0x" + Integer.toHexString(bytes[i - 1]));
+						"but got 0x" + Integer.toHexString(bytes[i - 1]));
 			}
 		}
 		if (bytes[i] != delimiter) {
 			throw new IOException(
-					"Expecting 0x" + Integer.toHexString(delimiter)
+				"Expecting 0x" + Integer.toHexString(delimiter)
 					+ " but got 0x" + Integer.toHexString(bytes[i]));
-		} else {
-			i++;
 		}
+		i++;
 		return i;
 	}
 
