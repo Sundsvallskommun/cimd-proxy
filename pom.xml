@@ -16,7 +16,6 @@
         <docker.image.name>ms-cimd-proxy</docker.image.name>
         <published.container.port.test>9970</published.container.port.test>
         <published.container.port.production>9970</published.container.port.production>
-		<commons-codec.version>1.16.0</commons-codec.version>
 		<commons-logging.version>1.2</commons-logging.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
@@ -43,7 +42,6 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>${commons-codec.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -84,7 +82,6 @@
 								<useSwaggerAnnotations>true</useSwaggerAnnotations>
 								<hideGenerationTimestamp>true</hideGenerationTimestamp>
 								<interfaceOnly>true</interfaceOnly>
-								<useJakartaEe>true</useJakartaEe>
 								<useSpringBoot3>true</useSpringBoot3>
 							</configOptions>
 						</configuration>
@@ -103,8 +100,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${generated-sources-path}/${generated-sources-java-path}
-								</source>
+								<source>${generated-sources-path}/${generated-sources-java-path}</source>
 							</sources>
 						</configuration>
 					</execution>
