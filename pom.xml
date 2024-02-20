@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>se.sundsvall.dept44</groupId>
+        <artifactId>dept44-service-parent</artifactId>
+        <version>4.0</version>
+        <relativePath />
+    </parent>
+	<groupId>se.sundsvall.cimdproxy</groupId>
+	<artifactId>cimd-proxy</artifactId>
+	<version>1.0</version>
+	<name>cimd-proxy</name>
+	<properties>
+        <docker.image.name>ms-cimd-proxy</docker.image.name>
+        <published.container.port.test>9970</published.container.port.test>
+        <published.container.port.production>9970</published.container.port.production>
+		<commons-codec.version>1.16.0</commons-codec.version>
+		<commons-logging.version>1.2</commons-logging.version>
+		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
+		<generated-sources-java-path>src/main/java</generated-sources-java-path>
+	</properties>
+	<dependencies>
+		<!-- Test -->
+		<dependency>
+			<groupId>se.sundsvall.dept44</groupId>
+			<artifactId>dept44-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Framework -->
+		<dependency>
+			<groupId>se.sundsvall.dept44</groupId>
+			<artifactId>dept44-starter-feign</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>se.sundsvall.dept44</groupId>
+			<artifactId>dept44-common-validators</artifactId>
+		</dependency>
+
+		<!-- CIMD dependencies -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sms-sender-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/integrations/sms-sender-api.yml</inputSpec>
+							<output>${generated-sources-path}</output>
+							<generatorName>spring</generatorName>
+							<generateApis>false</generateApis>
+							<generateSupportingFiles>false</generateSupportingFiles>
+							<configOptions>
+								<sourceFolder>${generated-sources-java-path}</sourceFolder>
+								<modelPackage>generated.se.sundsvall.smssender</modelPackage>
+								<generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
+								<generatePom>false</generatePom>
+								<library>spring-boot</library>
+								<dateLibrary>java8</dateLibrary>
+								<apiPackage>generated</apiPackage>
+								<openApiNullable>false</openApiNullable>
+								<useSwaggerUi>false</useSwaggerUi>
+								<useBeanValidation>true</useBeanValidation>
+								<useSwaggerAnnotations>true</useSwaggerAnnotations>
+								<hideGenerationTimestamp>true</hideGenerationTimestamp>
+								<interfaceOnly>true</interfaceOnly>
+								<useJakartaEe>true</useJakartaEe>
+								<useSpringBoot3>true</useSpringBoot3>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-generated-source</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${generated-sources-path}/${generated-sources-java-path}
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/se/sundsvall/cimdproxy/Application*</exclude>
+						<exclude>**/se/sundsvall/cimdproxy/configuration/*</exclude>
+						<exclude>**/se/sundsvall/cimdproxy/integration/**/*Configuration*</exclude>
+						<exclude>**/se/sundsvall/cimdproxy/integration/**/*Properties*</exclude>
+						<!-- Exclude CIMD library stuff -->
+						<exclude>**/se/sundsvall/cimdproxy/cimd/**/*</exclude>
+						<exclude>**/com/googlecode/jcimd/*</exclude>
+						<!-- Exclude generated integrations code -->
+						<exclude>**/generated/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

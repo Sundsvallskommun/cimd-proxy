@@ -1,0 +1,52 @@
+package se.sundsvall.cimdproxy.integration.smssender;
+
+import java.time.Duration;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.validation.annotation.Validated;
+
+@Validated
+@ConfigurationProperties(prefix = "integration.sms-sender")
+record SmsSenderIntegrationProperties(
+
+        // Code-wise unused property, but it remains to make sure it isn't left out, since the Feign
+        // client uses it
+        @NotBlank
+        String baseUrl,
+
+        @Valid
+        OAuth2 oAuth2,
+
+        @Valid
+        Sms sms,
+
+        @DefaultValue("PT15S")
+        Duration readTimeout,
+
+        @DefaultValue("PT5S")
+        Duration connectTimeout) {
+
+    record Sms(
+
+        @NotBlank
+        @DefaultValue("Sundsvall")
+        String from) { }
+
+    record OAuth2(
+
+        @NotBlank
+        String tokenUrl,
+
+        @NotBlank
+        String clientId,
+
+        @NotBlank
+        String clientSecret,
+
+        @DefaultValue("client_credentials")
+        String grantType) { }
+}

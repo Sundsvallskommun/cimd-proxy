@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: api-cimd-proxy
+
+# Disable OpenAPI/Swagger UI
+openapi:
+  enabled: false
+
+# Enable JCIMD trace logging
+logging:
+  level:
+    com.googlecode.jcimd: TRACE
+    com.googlecode.jcimd.charset: OFF
