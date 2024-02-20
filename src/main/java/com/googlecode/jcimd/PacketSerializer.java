@@ -268,7 +268,7 @@ public class PacketSerializer {
 
 		// Parse contents of "temp" (it contains the entire CIMD message
 		// including STX and ETX bytes).
-		final byte bytes[] = temp.toByteArray();
+		final byte[] bytes = temp.toByteArray();
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Received " + bytes.length + " byte(s)");

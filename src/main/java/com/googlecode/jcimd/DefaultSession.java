@@ -59,10 +59,9 @@ public class DefaultSession implements Session {
 				final String errorText = errorTextParameter != null ? errorTextParameter.getValue() : null;
 				if (errorText == null) {
 					throw new NegativeResponseException(Integer.valueOf(errorCode));
-				} else {
-					throw new NegativeResponseException(
-						Integer.valueOf(errorCode), errorText);
 				}
+				throw new NegativeResponseException(
+					Integer.valueOf(errorCode), errorText);
 			}
 			return response;
 		} catch (final Exception e) {
@@ -160,16 +159,6 @@ public class DefaultSession implements Session {
 				"(Message Center Timestamp - 060)");
 		}
 		return serviceCenterTimeStampParameter.getValue();
-		/*
-		 * try {
-		 * return dateFormat.parse(serviceCenterTimeStampParameter.getValue());
-		 * } catch (java.text.ParseException e) {
-		 * throw new IOException("Invalid response parameter " +
-		 * "(Message Center Timestamp - 060). " +
-		 * "Expecting yyMMddHHmmss format. But got [" +
-		 * serviceCenterTimeStampParameter.getValue() + "]");
-		 * }
-		 */
 	}
 
 	private void addParameterIfNotNull(
@@ -212,8 +201,7 @@ public class DefaultSession implements Session {
 	@Override
 	public MessageStatus enquireMessageStatus(String destinationAddress,
 		String messageCenterTimestamp) throws IOException, SessionException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
-
 }
