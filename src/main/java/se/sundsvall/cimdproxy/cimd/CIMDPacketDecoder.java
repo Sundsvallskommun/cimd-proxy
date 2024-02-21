@@ -1,5 +1,6 @@
 package se.sundsvall.cimdproxy.cimd;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.googlecode.jcimd.Packet;
@@ -15,51 +16,51 @@ import io.netty.handler.codec.ByteToMessageDecoder;
  */
 public class CIMDPacketDecoder extends ByteToMessageDecoder {
 
-    private enum Token {
-        STX((byte) 2),
-        ETX((byte) 3);
+	private enum Token {
+		STX((byte) 2),
+		ETX((byte) 3);
 
-        private final byte val;
+		private final byte val;
 
-        Token(final byte b) {
-            val = b;
-        }
-    }
+		Token(final byte b) {
+			val = b;
+		}
+	}
 
-    private final boolean useChecksum;
+	private final boolean useChecksum;
 
-    public CIMDPacketDecoder(final boolean useChecksum) {
-        this.useChecksum = useChecksum;
-    }
+	public CIMDPacketDecoder(final boolean useChecksum) {
+		this.useChecksum = useChecksum;
+	}
 
-    @Override
-    protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out) throws Exception {
-        var packet = doDecode(in);
+	@Override
+	protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out) throws Exception {
+		final var packet = doDecode(in);
 
-        if (packet != null) {
-            out.add(packet);
-        }
-    }
+		if (packet != null) {
+			out.add(packet);
+		}
+	}
 
-    protected Packet doDecode(final ByteBuf in) throws Exception {
-        var start = in.readerIndex();
+	protected Packet doDecode(final ByteBuf in) throws IOException {
+		final var start = in.readerIndex();
 
-        while (in.readableBytes() > 0) {
-            in.markReaderIndex();
-            var c = in.readByte();
-            if (c == Token.ETX.val) {
-                var pos = in.readerIndex();
+		while (in.readableBytes() > 0) {
+			in.markReaderIndex();
+			final var c = in.readByte();
+			if (c == Token.ETX.val) {
+				final var pos = in.readerIndex();
 
-                try {
-                    return PacketSerializer.deserializePacket(new ByteBufInputStream(in.slice(start, pos)), useChecksum);
-                } finally {
-                    in.readerIndex(pos);
-                }
-            }
-        }
+				try (var inputStream = new ByteBufInputStream(in.slice(start, pos))) {
+					return PacketSerializer.deserializePacket(inputStream, useChecksum);
+				} finally {
+					in.readerIndex(pos);
+				}
+			}
+		}
 
-        in.readerIndex(start);
+		in.readerIndex(start);
 
-        return null;
-    }
+		return null;
+	}
 }

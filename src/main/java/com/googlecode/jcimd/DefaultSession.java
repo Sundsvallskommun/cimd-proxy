@@ -1,18 +1,18 @@
 /*
  * Copyright 2010-2011 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package com.googlecode.jcimd;
 
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class DefaultSession implements Session {
 
-	private ConnectionFactory connectionFactory;
+	private final ConnectionFactory connectionFactory;
 	private Connection connection;
 
 	public DefaultSession(ConnectionFactory connectionFactory) {
@@ -40,42 +40,42 @@ public class DefaultSession implements Session {
 	}
 
 	private Packet send(Packet packet) throws SessionException {
-		if (this.connection == null || this.connection.isClosed()) {
+		if ((this.connection == null) || this.connection.isClosed()) {
 			try {
 				this.connection = this.connectionFactory.getConnection();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new SessionException("Failed to get a connection", e);
 			}
 		}
 		try {
-			Packet response = this.connection.send(packet);
+			final Packet response = this.connection.send(packet);
 			if (!response.isPositiveResponse()) {
 				if (response.isNack()) {
 					throw new NackException(response.getSequenceNumber());
-				} else {
-					Parameter errorCodeParameter = response.getParameter(900);
-					String errorCode = errorCodeParameter != null ? errorCodeParameter.getValue() : null;
-					Parameter errorTextParameter = response.getParameter(901);
-					String errorText = errorTextParameter != null ? errorTextParameter.getValue() : null;
-					if (errorText == null) {
-						throw new NegativeResponseException(Integer.valueOf(errorCode));
-					} else {
-						throw new NegativeResponseException(
-								Integer.valueOf(errorCode), errorText);
-					}
 				}
+				final Parameter errorCodeParameter = response.getParameter(900);
+				final String errorCode = errorCodeParameter != null ? errorCodeParameter.getValue() : null;
+				final Parameter errorTextParameter = response.getParameter(901);
+				final String errorText = errorTextParameter != null ? errorTextParameter.getValue() : null;
+				if (errorText == null) {
+					throw new NegativeResponseException(Integer.valueOf(errorCode));
+				}
+				throw new NegativeResponseException(
+					Integer.valueOf(errorCode), errorText);
 			}
 			return response;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			try {
 				closeConnection();
-			} catch (IOException ignored) {}
+			} catch (final IOException ignored) {
+				// Intentionally empty
+			}
 			throw new SessionException(e);
 		}
 	}
 
 	private void closeConnection() throws IOException {
-		if (this.connection != null && this.connection.isOpen()) {
+		if ((this.connection != null) && this.connection.isOpen()) {
 			this.connection.close();
 		}
 		this.connection = null;
@@ -85,27 +85,27 @@ public class DefaultSession implements Session {
 	public void close() throws SessionException {
 		try {
 			closeConnection();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new SessionException(e);
 		}
 	}
 
 	@Override
 	public String submitMessage(String destinationAddress,
-			String originatingAddress, String alphanumericOriginatingAddress,
-			UserData userData,
-			Boolean moreMessagesToSend,
-			TimePeriod validityPeriod,
-			Integer protocolIdentifier,
-			TimePeriod firstDeliveryTime,
-			Boolean replyPathEnabled,
-			Integer statusReportRequest,
-			Boolean cancelEnabled,
-			Integer tariffClass,
-			Integer serviceDescription,
-			Integer priority)
-	throws IOException, SessionException {
-		List<Parameter> parameters = new LinkedList<Parameter>();
+		String originatingAddress, String alphanumericOriginatingAddress,
+		UserData userData,
+		Boolean moreMessagesToSend,
+		TimePeriod validityPeriod,
+		Integer protocolIdentifier,
+		TimePeriod firstDeliveryTime,
+		Boolean replyPathEnabled,
+		Integer statusReportRequest,
+		Boolean cancelEnabled,
+		Integer tariffClass,
+		Integer serviceDescription,
+		Integer priority)
+		throws IOException, SessionException {
+		final List<Parameter> parameters = new LinkedList<>();
 		parameters.add(new Parameter(Parameter.DESTINATION_ADDRESS, destinationAddress));
 		addParameterIfNotNull(Parameter.ORIGINATING_ADDRESS, originatingAddress, parameters);
 		addParameterIfNotNull(Parameter.ALPHANUMERIC_ORIGINATING_ADDRESS, alphanumericOriginatingAddress, parameters);
@@ -125,10 +125,10 @@ public class DefaultSession implements Session {
 		if (validityPeriod != null) {
 			if (validityPeriod.isRelative()) {
 				addParameterIfNotNull(Parameter.VALIDITY_PERIOD_RELATIVE,
-						validityPeriod.getRelativeTime(), parameters);
+					validityPeriod.getRelativeTime(), parameters);
 			} else {
 				addParameterIfNotNull(Parameter.VALIDITY_PERIOD_ABSOLUTE,
-						validityPeriod.getAbsoluteTime(), parameters);
+					validityPeriod.getAbsoluteTime(), parameters);
 			}
 		}
 
@@ -137,10 +137,10 @@ public class DefaultSession implements Session {
 		if (firstDeliveryTime != null) {
 			if (firstDeliveryTime.isRelative()) {
 				addParameterIfNotNull(Parameter.FIRST_DELIVERY_TIME_RELATIVE,
-						firstDeliveryTime.getRelativeTime(), parameters);
+					firstDeliveryTime.getRelativeTime(), parameters);
 			} else {
 				addParameterIfNotNull(Parameter.FIRST_DELIVERY_TIME_ABSOLUTE,
-						firstDeliveryTime.getAbsoluteTime(), parameters);
+					firstDeliveryTime.getAbsoluteTime(), parameters);
 			}
 		}
 
@@ -151,57 +151,48 @@ public class DefaultSession implements Session {
 		addParameterIfNotNull(Parameter.SERVICE_DESCRIPTION, serviceDescription, parameters);
 		addParameterIfNotNull(Parameter.PRIORITY, priority, parameters);
 
-		Packet response = send(new Packet(Packet.OP_SUBMIT_MESSAGE,
-				parameters.toArray(new Parameter[0])));
-		Parameter serviceCenterTimeStampParameter = response.getParameter(Parameter.MC_TIMESTAMP);
+		final Packet response = send(new Packet(Packet.OP_SUBMIT_MESSAGE,
+			parameters.toArray(new Parameter[0])));
+		final Parameter serviceCenterTimeStampParameter = response.getParameter(Parameter.MC_TIMESTAMP);
 		if (serviceCenterTimeStampParameter == null) {
 			throw new IOException("Missing response parameter " +
-					"(Message Center Timestamp - 060)");
+				"(Message Center Timestamp - 060)");
 		}
 		return serviceCenterTimeStampParameter.getValue();
-		/*
-		try {
-			return dateFormat.parse(serviceCenterTimeStampParameter.getValue());
-		} catch (java.text.ParseException e) {
-			throw new IOException("Invalid response parameter " +
-					"(Message Center Timestamp - 060). " +
-					"Expecting yyMMddHHmmss format. But got [" +
-					serviceCenterTimeStampParameter.getValue() + "]");
-		}
-		*/
 	}
 
 	private void addParameterIfNotNull(
-			int number, String value, List<Parameter> parameters) {
+		int number, String value, List<Parameter> parameters) {
 		if (value != null) {
 			parameters.add(new Parameter(number, value));
 		}
 	}
 
 	private void addParameterIfNotNull(
-			int number, Integer value, List<Parameter> parameters) {
+		int number, Integer value, List<Parameter> parameters) {
 		if (value != null) {
 			parameters.add(new Parameter(number, value));
 		}
 	}
 
 	private void addParameterIfNotNull(
-			int number, Boolean value, List<Parameter> parameters) {
+		int number, Boolean value, List<Parameter> parameters) {
 		if (value != null) {
 			parameters.add(new Parameter(number, value));
 		}
 	}
 
 	private void addParameterIfNotNull(
-			int number, byte[] value, List<Parameter> parameters) {
+		int number, byte[] value, List<Parameter> parameters) {
 		if (value != null) {
 			parameters.add(new Parameter(number, value));
 		}
 	}
 
 	private final DateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+
 	private void addParameterIfNotNull(
-			int number, Date value, List<Parameter> parameters) {
+		int number, Date value, List<Parameter> parameters) {
 		if (value != null) {
 			parameters.add(new Parameter(number, dateFormat.format(value)));
 		}
@@ -209,9 +200,8 @@ public class DefaultSession implements Session {
 
 	@Override
 	public MessageStatus enquireMessageStatus(String destinationAddress,
-			String messageCenterTimestamp) throws IOException, SessionException {
-		// TODO Auto-generated method stub
+		String messageCenterTimestamp) throws IOException, SessionException {
+
 		return null;
 	}
-
 }
