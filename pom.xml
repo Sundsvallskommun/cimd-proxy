@@ -13,9 +13,6 @@
 	<version>1.0</version>
 	<name>cimd-proxy</name>
 	<properties>
-        <docker.image.name>ms-cimd-proxy</docker.image.name>
-        <published.container.port.test>9970</published.container.port.test>
-        <published.container.port.production>9970</published.container.port.production>
 		<commons-logging.version>1.3.2</commons-logging.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
