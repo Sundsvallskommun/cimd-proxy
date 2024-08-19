@@ -13,7 +13,7 @@
 	<version>1.0</version>
 	<name>cimd-proxy</name>
 	<properties>
-		<commons-logging.version>1.3.3</commons-logging.version>
+		<commons-logging.version>1.3.4</commons-logging.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
 	</properties>
