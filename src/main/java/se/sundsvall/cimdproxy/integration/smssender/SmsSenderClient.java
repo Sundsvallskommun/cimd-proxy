@@ -1,9 +1,10 @@
 package se.sundsvall.cimdproxy.integration.smssender;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import feign.RequestLine;
 import generated.se.sundsvall.smssender.SendSmsRequest;
 import generated.se.sundsvall.smssender.SendSmsResponse;
 
@@ -14,6 +15,6 @@ import generated.se.sundsvall.smssender.SendSmsResponse;
 )
 interface SmsSenderClient {
 
-    @RequestLine("POST /send/sms?flash=true")
-    SendSmsResponse sendSms(@RequestBody final SendSmsRequest request);
+    @PostMapping("/{municipalityId}/send/sms")
+    SendSmsResponse sendSms(@PathVariable("municipalityId") final String municipalityId, @RequestBody final SendSmsRequest request);
 }

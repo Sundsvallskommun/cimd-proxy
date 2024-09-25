@@ -13,10 +13,11 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "integration.sms-sender")
 record SmsSenderIntegrationProperties(
 
-        // Code-wise unused property, but it remains to make sure it isn't left out, since the Feign
-        // client uses it
         @NotBlank
         String baseUrl,
+
+        @NotBlank
+        String municipalityId,
 
         @Valid
         OAuth2 oAuth2,
