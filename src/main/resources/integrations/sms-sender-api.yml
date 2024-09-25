@@ -5,46 +5,54 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: "1.2"
+  version: '2.0'
 servers:
-  - url: http://localhost:8080
-    description: Generated server url
+- url: http://localhost:8080
+  description: Generated server url
 paths:
-  /send/sms:
+  /{municipalityId}/send/sms:
     post:
       tags:
-        - SMS Resources
+      - SMS Resources
       summary: Send an SMS
       operationId: sendSms
+      parameters:
+      - name: municipalityId
+        in: path
+        description: Municipality id
+        required: true
+        schema:
+          type: string
+        example: 2281
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SendSmsRequest'
+              $ref: "#/components/schemas/SendSmsRequest"
         required: true
       responses:
-        "200":
-          description: Successful Operation
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/SendSmsResponse'
         "500":
           description: Internal Server Error
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
+        "200":
+          description: Successful Operation
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SendSmsResponse"
         "400":
           description: Bad Request
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
   /api-docs:
     get:
       tags:
-        - API
+      - API
       summary: OpenAPI
       operationId: getApiDocs
       responses:
@@ -61,13 +69,13 @@ components:
   schemas:
     SendSmsRequest:
       required:
-        - message
-        - mobileNumber
-        - sender
+      - message
+      - mobileNumber
+      - sender
       type: object
       properties:
         sender:
-          $ref: '#/components/schemas/Sender'
+          $ref: "#/components/schemas/Sender"
         mobileNumber:
           type: string
           description: Mobile number incl. country code
@@ -78,51 +86,52 @@ components:
             and 08:00 or not
           default: NORMAL
           enum:
-            - HIGH
-            - NORMAL
+          - HIGH
+          - NORMAL
         message:
           type: string
     Sender:
       required:
-        - name
+      - name
       type: object
       properties:
         name:
           maxLength: 11
-          minLength: 0
+          minLength: 3
           type: string
-          description: The sender of the SMS
+          description: "The sender of the SMS, swedish letters(å,ä,ö) will be replaced\
+            \ by (a,a,o) respectively"
           example: sender
-    SendSmsResponse:
-      type: object
-      properties:
-        sent:
-          type: boolean
     Problem:
       type: object
       properties:
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
         instance:
           type: string
           format: uri
         type:
           type: string
           format: uri
-        parameters:
-          type: object
-          additionalProperties:
-            type: object
-        status:
-          $ref: '#/components/schemas/StatusType'
         title:
           type: string
         detail:
           type: string
+        status:
+          $ref: "#/components/schemas/StatusType"
     StatusType:
       type: object
       properties:
+        reasonPhrase:
+          type: string
         statusCode:
           type: integer
           format: int32
-        reasonPhrase:
-          type: string
+    SendSmsResponse:
+      type: object
+      properties:
+        sent:
+          type: boolean
   securitySchemes: {}

@@ -13,7 +13,6 @@ import se.sundsvall.dept44.configuration.feign.FeignConfiguration;
 import se.sundsvall.dept44.configuration.feign.FeignMultiCustomizer;
 import se.sundsvall.dept44.configuration.feign.decoder.ProblemErrorDecoder;
 
-import feign.Contract;
 import feign.Request;
 
 @Import(FeignConfiguration.class)
@@ -27,13 +26,9 @@ class SmsSenderIntegrationConfiguration {
     }
 
     @Bean
-    Contract useFeignAnnotations() {
-        return new Contract.Default();
-    }
-
-    @Bean
     FeignBuilderCustomizer customizer() {
         return FeignMultiCustomizer.create()
+            .withRequestInterceptor(template -> template.query("flash", "true"))
             .withRetryableOAuth2InterceptorForClientRegistration(ClientRegistration
                 .withRegistrationId(SmsSenderIntegration.INTEGRATION_NAME)
                 .tokenUri(properties.oAuth2().tokenUrl())

@@ -19,7 +19,7 @@ public class SmsSenderIntegration {
     private final SmsSenderIntegrationProperties properties;
     private final SmsSenderClient client;
 
-    public SmsSenderIntegration(final SmsSenderIntegrationProperties properties, final SmsSenderClient client) {
+    SmsSenderIntegration(final SmsSenderIntegrationProperties properties, final SmsSenderClient client) {
         this.properties = properties;
         this.client = client;
     }
@@ -32,7 +32,7 @@ public class SmsSenderIntegration {
                 .mobileNumber(destinationNumber)
                 .message(message);
 
-            var result = client.sendSms(request);
+            var result = client.sendSms(properties.municipalityId(), request);
 
             if (Boolean.TRUE.equals(result.getSent())) {
                 LOG.info("SMS sent");
