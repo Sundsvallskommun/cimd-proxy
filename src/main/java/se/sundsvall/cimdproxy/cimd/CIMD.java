@@ -1,13 +1,20 @@
 package se.sundsvall.cimdproxy.cimd;
 
+import static java.util.Objects.requireNonNull;
+
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.X509TrustManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
+
+import se.sundsvall.cimdproxy.cimd.util.SslUtil;
+import se.sundsvall.cimdproxy.configuration.CIMDProperties;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -18,8 +25,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import se.sundsvall.cimdproxy.cimd.util.SslUtil;
-import se.sundsvall.cimdproxy.configuration.CIMDProperties;
 
 /**
  * CIMD server.
@@ -45,14 +50,23 @@ public class CIMD implements DisposableBean {
 		useCimdChecksum = properties.useCimdChecksum();
 
 		if (sslEnabled) {
-			final var keyStoreAlias = properties.ssl().keystore().alias();
-			final var keyStorePassword = properties.ssl().keystore().password();
-			final var keyStoreData = Base64.getDecoder().decode(properties.ssl().keystore().data());
+			var keyStoreProperties = properties.ssl().keyStore();
 
-			final var privateKey = SslUtil.getPrivateKey(keyStoreAlias, keyStoreData, keyStorePassword);
-			final var cert = (X509Certificate) SslUtil.getCertificate(keyStoreAlias, keyStoreData, keyStorePassword);
+			var keyStoreType = keyStoreProperties.type();
+			var keyStoreAlias = keyStoreProperties.alias();
+			var keyStorePassword = keyStoreProperties.password();
+			var keyStoreData = Base64.getDecoder().decode(keyStoreProperties.data());
+LOG.info("KeyStore: '{}'", keyStoreProperties.data());
+			var privateKey = requireNonNull(SslUtil.getPrivateKey(keyStoreType, keyStoreAlias, keyStoreData, keyStorePassword), "Unable to obtain private key");
+			var cert = requireNonNull((X509Certificate) SslUtil.getCertificate(keyStoreType, keyStoreAlias, keyStoreData, keyStorePassword), "Unable to obtain certificate");
 
-			sslContext = SslContextBuilder.forServer(privateKey, properties.ssl().keystore().password(), cert).build();
+			var sslContextBuilder = SslContextBuilder.forServer(privateKey, keyStorePassword, cert);
+			if (properties.ssl().trustAll()) {
+				sslContextBuilder.trustManager(new NoOpTrustManager());
+			} else {
+				sslContextBuilder.trustManager(cert);
+			}
+			sslContext = sslContextBuilder.build();
 		}
 	}
 
@@ -65,7 +79,7 @@ public class CIMD implements DisposableBean {
 
 					@Override
 					protected void initChannel(final SocketChannel socketChannel) {
-						final var pipeline = socketChannel.pipeline();
+						var pipeline = socketChannel.pipeline();
 
 						if (sslEnabled) {
 							pipeline.addLast(sslContext.newHandler(socketChannel.alloc()));
@@ -106,6 +120,20 @@ public class CIMD implements DisposableBean {
 			parentEventLoopGroup.shutdownGracefully();
 
 			LOG.info("CIMD shut down");
+		}
+	}
+
+	private static class NoOpTrustManager implements X509TrustManager {
+
+		@Override
+		public void checkClientTrusted(final X509Certificate[] chain, final String authType) { }
+
+		@Override
+		public void checkServerTrusted(final X509Certificate[] chain, final String authType) { }
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return new X509Certificate[0];
 		}
 	}
 }

@@ -9,31 +9,29 @@ import se.sundsvall.cimdproxy.cimd.exception.CIMDException;
 
 public final class SslUtil {
 
-    private static KeyStore keyStore;
-
     private SslUtil() { }
 
-    public static PrivateKey getPrivateKey(final String alias, final byte[] key, final String password) {
+    public static PrivateKey getPrivateKey(final String keyStoreType, final String keyStoreAlias, final byte[] keyStoreData, final String keyStorePassword) {
         try {
-            var passphrase = password.toCharArray();
-            var keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(new ByteArrayInputStream(key), passphrase);
+            var passphrase = keyStorePassword.toCharArray();
+            var keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(new ByteArrayInputStream(keyStoreData), passphrase);
 
-            return (PrivateKey) keyStore.getKey(alias, passphrase);
+            return (PrivateKey) keyStore.getKey(keyStoreAlias, passphrase);
         } catch (Exception e) {
-            throw new CIMDException("Exception when getting private key", e);
+            throw new CIMDException("Exception when obtaining private key", e);
         }
     }
 
-    public static Certificate getCertificate(final String alias, final byte[] key, final String password) {
+    public static Certificate getCertificate(final String keyStoreType, final String keyStoreAlias, final byte[] keyStoreData, final String keyStorePassword) {
         try {
-            var passphrase = password.toCharArray();
-            var keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(new ByteArrayInputStream(key), passphrase);
+            var passphrase = keyStorePassword.toCharArray();
+            var keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(new ByteArrayInputStream(keyStoreData), passphrase);
 
-            return keyStore.getCertificate(alias);
+            return keyStore.getCertificate(keyStoreAlias);
         } catch (Exception e) {
-            throw new CIMDException("Exception when getting certificate", e);
+            throw new CIMDException("Exception when obtaining certificate", e);
         }
     }
 }

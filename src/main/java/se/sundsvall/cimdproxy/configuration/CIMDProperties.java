@@ -1,18 +1,24 @@
 package se.sundsvall.cimdproxy.configuration;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.validation.annotation.Validated;
 
 import se.sundsvall.dept44.common.validators.annotation.ValidBase64;
 
+@Validated
 @ConfigurationProperties(prefix = "cimd")
 public record CIMDProperties(
 
         @DefaultValue("9971")
         int port,
 
+        @Valid
+        @NotNull
         SSL ssl,
 
         @DefaultValue("true")
@@ -23,9 +29,17 @@ public record CIMDProperties(
             @DefaultValue("false")
             boolean enabled,
 
-            Keystore keystore) {
+            @DefaultValue("false")
+            boolean trustAll,
 
-        public record Keystore(
+            @Valid
+            KeyStore keyStore) {
+
+        public record KeyStore(
+
+            @NotBlank
+            String type,
+
             @NotBlank
             String alias,
 
