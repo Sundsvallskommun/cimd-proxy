@@ -1,7 +1,6 @@
 package se.sundsvall.cimdproxy.configuration;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,21 +20,11 @@ public record CIMDProperties(
 	@DefaultValue("true") boolean useCimdChecksum) {
 
 	public record SSL(
-
 		@DefaultValue("false") boolean enabled,
 
-		@DefaultValue("false") boolean trustAll,
-
-		@Valid KeyStore keyStore) {
-
-		public record KeyStore(
-
-			@NotBlank String type,
-
-			@NotBlank String alias,
-
-			@ValidBase64 String data,
-
-			String password) {}
+		@ValidBase64(nullable = true) String serverCert,
+		@ValidBase64(nullable = true) String serverKey,
+		String serverKeyPassword,
+		@ValidBase64(nullable = true) String trustedCert) {
 	}
 }

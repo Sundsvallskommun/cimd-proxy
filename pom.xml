@@ -23,7 +23,6 @@
 			<artifactId>dept44-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<!-- Framework -->
 		<dependency>
 			<groupId>se.sundsvall.dept44</groupId>
@@ -33,7 +32,6 @@
 			<groupId>se.sundsvall.dept44</groupId>
 			<artifactId>dept44-common-validators</artifactId>
 		</dependency>
-
 		<!-- CIMD dependencies -->
 		<dependency>
 			<groupId>commons-codec</groupId>
