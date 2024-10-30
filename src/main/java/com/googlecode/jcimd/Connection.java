@@ -30,10 +30,11 @@ public interface Connection {
 
 	/**
 	 * Sends a packet (containing an CIMD operation).
-	 * @param request the request packet
-	 * @return the response/reply packet
+	 * 
+	 * @param  request   the request packet
+	 * @return           the response/reply packet
 	 * @throws Exception when an error occurs while
-	 * 		sending the packet
+	 *                   sending the packet
 	 */
 	Packet send(Packet request) throws Exception;
 
@@ -41,6 +42,7 @@ public interface Connection {
 	 * Returns <code>true</code> if this connection is open
 	 * for sending packets. Otherwise, <code>false</code> is
 	 * returned.
+	 * 
 	 * @return <code>true</code> if this connection is open
 	 */
 	boolean isOpen();
@@ -48,6 +50,7 @@ public interface Connection {
 	/**
 	 * Returns <code>true</code> if this connection is closed.
 	 * Otherwise, <code>false</code> is returned.
+	 * 
 	 * @return <code>true</code> if this connection is closed
 	 */
 	boolean isClosed();

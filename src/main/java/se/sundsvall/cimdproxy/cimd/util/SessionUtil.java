@@ -16,38 +16,38 @@ import io.netty.channel.ChannelId;
 
 public final class SessionUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SessionUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SessionUtil.class);
 
-    private static final Map<ChannelId, Session> SESSIONS = new HashMap<>();
+	private static final Map<ChannelId, Session> SESSIONS = new HashMap<>();
 
-    private SessionUtil() { }
+	private SessionUtil() {}
 
-    public static synchronized Session getSession(final Channel channel) {
-        SESSIONS.computeIfAbsent(channel.id(), channelId -> {
-            var session = new Session(channel);
-            session.setAttribute(
-                SessionAttribute.CIMD_PACKET_SEQUENCE_GENERATOR.toString(),
-                new SmsCenterPacketSequenceNumberGenerator());
-            LOG.info("Session [{}] opened", channelId);
-            return session;
-        });
+	public static synchronized Session getSession(final Channel channel) {
+		SESSIONS.computeIfAbsent(channel.id(), channelId -> {
+			var session = new Session(channel);
+			session.setAttribute(
+				SessionAttribute.CIMD_PACKET_SEQUENCE_GENERATOR.toString(),
+				new SmsCenterPacketSequenceNumberGenerator());
+			LOG.info("Session [{}] opened", channelId);
+			return session;
+		});
 
-        return SESSIONS.get(channel.id());
-    }
+		return SESSIONS.get(channel.id());
+	}
 
-    public static synchronized void removeSession(final Session session) {
-        SESSIONS.remove(session.getId());
-    }
+	public static synchronized void removeSession(final Session session) {
+		SESSIONS.remove(session.getId());
+	}
 
-    public static String getUserId(final Session session) {
-        return session.getAttribute(SessionAttribute.USER_ID.toString());
-    }
+	public static String getUserId(final Session session) {
+		return session.getAttribute(SessionAttribute.USER_ID.toString());
+	}
 
-    public static void setUserId(final Session session, final String userId) {
-        session.setAttribute(SessionAttribute.USER_ID.toString(), userId);
-    }
+	public static void setUserId(final Session session, final String userId) {
+		session.setAttribute(SessionAttribute.USER_ID.toString(), userId);
+	}
 
-    public static PacketSequenceNumberGenerator getPacketSequenceNumberGenerator(final Session session) {
-        return session.getAttribute(SessionAttribute.CIMD_PACKET_SEQUENCE_GENERATOR.toString());
-    }
+	public static PacketSequenceNumberGenerator getPacketSequenceNumberGenerator(final Session session) {
+		return session.getAttribute(SessionAttribute.CIMD_PACKET_SEQUENCE_GENERATOR.toString());
+	}
 }

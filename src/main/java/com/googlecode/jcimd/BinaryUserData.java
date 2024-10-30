@@ -22,7 +22,7 @@ package com.googlecode.jcimd;
  * and {@link #getBody()} method will always return <code>null</code>.
  *
  * @author Lorenzo Dee
- * @see StringUserData
+ * @see    StringUserData
  */
 public class BinaryUserData extends AbstractUserData {
 
@@ -44,7 +44,9 @@ public class BinaryUserData extends AbstractUserData {
 		this(binaryBody, null, 0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.springframework.integration.cimd.UserData#isBodyBinary()
 	 */
 	@Override
@@ -52,7 +54,9 @@ public class BinaryUserData extends AbstractUserData {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.springframework.integration.cimd.UserData#getBody()
 	 */
 	@Override
@@ -60,7 +64,9 @@ public class BinaryUserData extends AbstractUserData {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.springframework.integration.cimd.UserData#getBinaryBody()
 	 */
 	@Override

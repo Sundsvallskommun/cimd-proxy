@@ -50,7 +50,9 @@ public class Gsm8BitUnpackedCharsetTest {
 
 	@Test
 	void decodesNonAlphaNumericCharacters() throws Exception {
-		byte[] bytes = new byte[] { 0x00, 0x02 };
+		byte[] bytes = new byte[] {
+			0x00, 0x02
+		};
 		ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
 		CharBuffer charBuffer = decoder.decode(byteBuffer);
 

@@ -14,38 +14,28 @@ import se.sundsvall.dept44.common.validators.annotation.ValidBase64;
 @ConfigurationProperties(prefix = "cimd")
 public record CIMDProperties(
 
-        @DefaultValue("9971")
-        int port,
+	@DefaultValue("9971") int port,
 
-        @Valid
-        @NotNull
-        SSL ssl,
+	@Valid @NotNull SSL ssl,
 
-        @DefaultValue("true")
-        boolean useCimdChecksum) {
+	@DefaultValue("true") boolean useCimdChecksum) {
 
-    public record SSL(
+	public record SSL(
 
-            @DefaultValue("false")
-            boolean enabled,
+		@DefaultValue("false") boolean enabled,
 
-            @DefaultValue("false")
-            boolean trustAll,
+		@DefaultValue("false") boolean trustAll,
 
-            @Valid
-            KeyStore keyStore) {
+		@Valid KeyStore keyStore) {
 
-        public record KeyStore(
+		public record KeyStore(
 
-            @NotBlank
-            String type,
+			@NotBlank String type,
 
-            @NotBlank
-            String alias,
+			@NotBlank String alias,
 
-            @ValidBase64
-            String data,
+			@ValidBase64 String data,
 
-            String password) { }
-    }
+			String password) {}
+	}
 }

@@ -49,7 +49,9 @@ import java.util.Objects;
  * <li><strong>Hexadecimal (hex)</strong>
  *
  * <pre>
- * byte[] bytes = new byte[] { 0x05, 0x00, 0x03, 0x2a, 0x03, 0x01 };
+ * byte[] bytes = new byte[] {
+ * 	0x05, 0x00, 0x03, 0x2a, 0x03, 0x01
+ * };
  * Parameter p = new Parameter(34, bytes);
  * assert "0500032a0301".equals(p.getValue());
  * </pre>

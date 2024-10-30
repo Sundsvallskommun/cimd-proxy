@@ -56,7 +56,7 @@ public class CIMD implements DisposableBean {
 			var keyStoreAlias = keyStoreProperties.alias();
 			var keyStorePassword = keyStoreProperties.password();
 			var keyStoreData = Base64.getDecoder().decode(keyStoreProperties.data());
-LOG.info("KeyStore: '{}'", keyStoreProperties.data());
+			LOG.info("KeyStore: '{}'", keyStoreProperties.data());
 			var privateKey = requireNonNull(SslUtil.getPrivateKey(keyStoreType, keyStoreAlias, keyStoreData, keyStorePassword), "Unable to obtain private key");
 			var cert = requireNonNull((X509Certificate) SslUtil.getCertificate(keyStoreType, keyStoreAlias, keyStoreData, keyStorePassword), "Unable to obtain certificate");
 
@@ -126,10 +126,10 @@ LOG.info("KeyStore: '{}'", keyStoreProperties.data());
 	private static class NoOpTrustManager implements X509TrustManager {
 
 		@Override
-		public void checkClientTrusted(final X509Certificate[] chain, final String authType) { }
+		public void checkClientTrusted(final X509Certificate[] chain, final String authType) {}
 
 		@Override
-		public void checkServerTrusted(final X509Certificate[] chain, final String authType) { }
+		public void checkServerTrusted(final X509Certificate[] chain, final String authType) {}
 
 		@Override
 		public X509Certificate[] getAcceptedIssuers() {

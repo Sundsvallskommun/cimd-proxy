@@ -25,7 +25,7 @@ import java.util.Date;
  * an {@link UnsupportedOperationException}.
  *
  * @author Lorenzo Dee
- * @see AbsoluteTimePeriod
+ * @see    AbsoluteTimePeriod
  */
 public class RelativeTimePeriod implements TimePeriod {
 
@@ -38,7 +38,9 @@ public class RelativeTimePeriod implements TimePeriod {
 		this.relativeTime = relativeTime;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.springframework.integration.cimd.TimePeriod#isRelative()
 	 */
 	@Override
@@ -46,7 +48,9 @@ public class RelativeTimePeriod implements TimePeriod {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.springframework.integration.cimd.TimePeriod#getRelativePeriod()
 	 */
 	@Override
@@ -54,7 +58,9 @@ public class RelativeTimePeriod implements TimePeriod {
 		return this.relativeTime;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.springframework.integration.cimd.TimePeriod#getAbsoluteTime()
 	 */
 	@Override

@@ -49,7 +49,7 @@ class DefaultSessionTest {
 	@BeforeEach
 	void setUp() {
 		connectionFactory = new TcpNetConnectionFactory(
-				host, port, username, password);
+			host, port, username, password);
 	}
 
 	@AfterEach
@@ -63,7 +63,7 @@ class DefaultSessionTest {
 		try {
 			String destinationAddress = "+19098858888";
 			UserData userData = new StringUserData("Hi there");
-			
+
 			submitMessage(destinationAddress, userData);
 
 			assertThat(server.getReceivedCommands())
@@ -100,7 +100,7 @@ class DefaultSessionTest {
 		try {
 			String destinationAddress = "+19098858888";
 			UserData userData = new StringUserData("Hi there");
-			
+
 			submitMessage(destinationAddress, userData);
 
 			System.err.println("Pausing for server to disconnect...");
@@ -112,11 +112,10 @@ class DefaultSessionTest {
 			server.getReceivedCommands().clear();
 			session.close();
 
-
 			assertThat(server.getReceivedCommands()).withFailMessage("One message expected").hasSize(1);
 			assertThat(server.getReceivedCommands().get(0).getOperationCode())
-					.withFailMessage("Logout message expected")
-					.isEqualTo(2);
+				.withFailMessage("Logout message expected")
+				.isEqualTo(2);
 		}
 	}
 

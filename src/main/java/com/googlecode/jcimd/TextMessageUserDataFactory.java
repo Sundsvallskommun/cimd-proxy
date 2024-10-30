@@ -51,7 +51,7 @@ public class TextMessageUserDataFactory {
 		} catch (UnsupportedCharsetException e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("GSM character set not loaded via context class loader." +
-						" Instantiating it directly.");
+					" Instantiating it directly.");
 			}
 			return new GsmCharsetProvider().charsetForName("GSM");
 		}
@@ -60,16 +60,16 @@ public class TextMessageUserDataFactory {
 	static {
 		if (logger.isDebugEnabled()) {
 			logger.debug("GSM max. bytes per char: "
-					+ (int) Math.ceil(GSM.newEncoder().maxBytesPerChar()));
+				+ (int) Math.ceil(GSM.newEncoder().maxBytesPerChar()));
 			logger.debug("UTF-16BE max. bytes per char: "
-					+ (int) Math.ceil(UTF16BE.newEncoder().maxBytesPerChar()));
+				+ (int) Math.ceil(UTF16BE.newEncoder().maxBytesPerChar()));
 		}
 	}
 
 	private static byte[] encodeAs(Charset charset, String textMessage) {
-		CharsetEncoder encoder = charset.newEncoder(); 
+		CharsetEncoder encoder = charset.newEncoder();
 		ByteBuffer byteBuffer = ByteBuffer.allocate(
-				textMessage.length() * (int) Math.ceil(encoder.maxBytesPerChar()));
+			textMessage.length() * (int) Math.ceil(encoder.maxBytesPerChar()));
 		encoder.encode(CharBuffer.wrap(textMessage), byteBuffer, true);
 		byte[] bytes = new byte[byteBuffer.position()];
 		byteBuffer.flip();
@@ -83,16 +83,18 @@ public class TextMessageUserDataFactory {
 	 * It also handles GSM 7-bit default alphabet encoding when possible.
 	 * Otherwise, UCS-2 (UTF-16 BE) encoding is used.
 	 *
-	 * @param textMessage the text message to be sent
-	 * @return an array of one or more {@link UserData} objects that represent the given
-	 * text message
+	 * @param  textMessage the text message to be sent
+	 * @return             an array of one or more {@link UserData} objects that represent the given
+	 *                     text message
 	 */
 	public static UserData[] newInstance(String textMessage) {
 		return newInstance(textMessage, 140);
 	}
 
 	private static byte nextRandom() {
-		byte bytes[] = { 0x00 };
+		byte bytes[] = {
+			0x00
+		};
 		new Random().nextBytes(bytes);
 		return bytes[0];
 	}
@@ -103,10 +105,10 @@ public class TextMessageUserDataFactory {
 	 * part length bytes). It also handles GSM 7-bit default alphabet encoding when possible.
 	 * Otherwise, UCS-2 (UTF-16 BE) encoding is used.
 	 *
-	 * @param textMessage the text message to be sent
-	 * @param partLength the given maximum number of bytes for each part
-	 * @return an array of one or more {@link UserData} objects that represent the given
-	 * text message
+	 * @param  textMessage the text message to be sent
+	 * @param  partLength  the given maximum number of bytes for each part
+	 * @return             an array of one or more {@link UserData} objects that represent the given
+	 *                     text message
 	 */
 	public static UserData[] newInstance(String textMessage, int partLength) {
 		final int headerLength = 6;
@@ -126,7 +128,7 @@ public class TextMessageUserDataFactory {
 		}
 		if (numberOfParts > 255) {
 			throw new IllegalArgumentException(
-					"textMessage is too long to fit in a max. of 255 parts (max. "
+				"textMessage is too long to fit in a max. of 255 parts (max. "
 					+ partLength + " for each part)");
 		}
 		UserData[] uds = new UserData[numberOfParts];
@@ -135,8 +137,8 @@ public class TextMessageUserDataFactory {
 				logger.debug("Splitting " + textMessageBytes + " bytes to " + numberOfParts + " parts");
 			}
 			byte[] udh, udhTemplate = new byte[] {
-					0x05, 0x00, 0x03, nextRandom() /* generate unique id */,
-					(byte) (numberOfParts & 0xff), 0x00
+				0x05, 0x00, 0x03, nextRandom() /* generate unique id */,
+				(byte) (numberOfParts & 0xff), 0x00
 			};
 			if (noNonGsmCharacters) {
 				int i = 0, part = 0;
@@ -145,7 +147,7 @@ public class TextMessageUserDataFactory {
 					int textMessagePartBits = 0;
 					textMessagePart.setLength(0);
 					while (i < textMessage.length()
-							&& (textMessagePartBits / 8) < actualPartLength) {
+						&& (textMessagePartBits / 8) < actualPartLength) {
 						char ch = textMessage.charAt(i);
 						int chBits = GsmCharsetProvider.countGsm7BitCharacterBits(ch);
 						if (((textMessagePartBits + 8 + chBits - 1) / 8) > actualPartLength) {
@@ -160,12 +162,12 @@ public class TextMessageUserDataFactory {
 					String textMessagePartString = textMessagePart.toString();
 					if (logger.isDebugEnabled()) {
 						logger.debug("Part " + (part + 1) + " ["
-								+ textMessagePartString + "]");
+							+ textMessagePartString + "]");
 					}
 					udh = udhTemplate.clone();
 					udh[5] = (byte) ((part + 1) & 0xff);
 					uds[part++] = new BinaryUserData(
-							encodeAs(GSM, textMessagePartString), udh, 0x00);
+						encodeAs(GSM, textMessagePartString), udh, 0x00);
 				}
 			} else {
 				int i = 0, part = 0;
@@ -173,19 +175,19 @@ public class TextMessageUserDataFactory {
 				while (i < textMessage.length()) {
 					textMessagePart.setLength(0);
 					while (i < textMessage.length()
-							&& textMessagePart.toString().getBytes(UTF16BE).length < actualPartLength) {
+						&& textMessagePart.toString().getBytes(UTF16BE).length < actualPartLength) {
 						textMessagePart.append(textMessage.charAt(i));
 						i++;
 					}
 					String textMessagePartString = textMessagePart.toString();
 					if (logger.isDebugEnabled()) {
 						logger.debug("Part " + (part + 1) + " ["
-								+ textMessagePartString + "]");
+							+ textMessagePartString + "]");
 					}
 					udh = udhTemplate.clone();
 					udh[5] = (byte) ((part + 1) & 0xff);
 					uds[part++] = new BinaryUserData(
-							encodeAs(UTF16BE, textMessagePartString), udh, 0x08);
+						encodeAs(UTF16BE, textMessagePartString), udh, 0x08);
 				}
 			}
 		} else {
@@ -197,7 +199,7 @@ public class TextMessageUserDataFactory {
 			}
 		}
 
-		return uds; 
+		return uds;
 	}
 
 }

@@ -12,38 +12,38 @@ import generated.se.sundsvall.smssender.Sender;
 @EnableConfigurationProperties(SmsSenderIntegrationProperties.class)
 public class SmsSenderIntegration {
 
-    static final String INTEGRATION_NAME = "SmsSender";
+	static final String INTEGRATION_NAME = "SmsSender";
 
-    private static final Logger LOG = LoggerFactory.getLogger(SmsSenderIntegration.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SmsSenderIntegration.class);
 
-    private final SmsSenderIntegrationProperties properties;
-    private final SmsSenderClient client;
+	private final SmsSenderIntegrationProperties properties;
+	private final SmsSenderClient client;
 
-    SmsSenderIntegration(final SmsSenderIntegrationProperties properties, final SmsSenderClient client) {
-        this.properties = properties;
-        this.client = client;
-    }
+	SmsSenderIntegration(final SmsSenderIntegrationProperties properties, final SmsSenderClient client) {
+		this.properties = properties;
+		this.client = client;
+	}
 
-    public boolean sendSms(final String destinationNumber, final String message) {
-        try {
-            var request = new SendSmsRequest()
-                .sender(new Sender()
-                    .name(properties.sms().from()))
-                .mobileNumber(destinationNumber)
-                .message(message);
+	public boolean sendSms(final String destinationNumber, final String message) {
+		try {
+			var request = new SendSmsRequest()
+				.sender(new Sender()
+					.name(properties.sms().from()))
+				.mobileNumber(destinationNumber)
+				.message(message);
 
-            var result = client.sendSms(properties.municipalityId(), request);
+			var result = client.sendSms(properties.municipalityId(), request);
 
-            if (Boolean.TRUE.equals(result.getSent())) {
-                LOG.info("SMS sent");
-            } else {
-                LOG.info("Unable to send SMS");
-            }
-            return result.getSent();
-        } catch (Exception e) {
-            LOG.warn("Unable to send SMS", e);
+			if (Boolean.TRUE.equals(result.getSent())) {
+				LOG.info("SMS sent");
+			} else {
+				LOG.info("Unable to send SMS");
+			}
+			return result.getSent();
+		} catch (Exception e) {
+			LOG.warn("Unable to send SMS", e);
 
-            return false;
-        }
-    }
+			return false;
+		}
+	}
 }

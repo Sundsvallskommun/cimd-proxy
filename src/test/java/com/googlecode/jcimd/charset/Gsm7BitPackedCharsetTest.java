@@ -74,7 +74,9 @@ class Gsm7BitPackedCharsetTest {
 
 	@Test
 	void decodesNonAlphaNumericCharacters() throws Exception {
-		final byte[] bytes = { 0x00, 0x01 };
+		final byte[] bytes = {
+			0x00, 0x01
+		};
 		final ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
 		final CharBuffer charBuffer = decoder.decode(byteBuffer);
 
@@ -174,7 +176,9 @@ class Gsm7BitPackedCharsetTest {
 		// _011 1111 _011 1111
 		// 1011 1111 __01 1111
 		// 0xBF 0x1F
-		assertThat(out.array()).isEqualTo(new byte[] { (byte) 0xBF, (byte) 0x1F });
+		assertThat(out.array()).isEqualTo(new byte[] {
+			(byte) 0xBF, (byte) 0x1F
+		});
 	}
 
 	@Test

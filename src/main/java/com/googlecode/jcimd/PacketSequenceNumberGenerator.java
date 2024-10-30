@@ -46,6 +46,7 @@ public interface PacketSequenceNumberGenerator {
 
 	/**
 	 * Returns the next packet sequence number.
+	 * 
 	 * @return the next packet sequence number
 	 */
 	int nextSequence();

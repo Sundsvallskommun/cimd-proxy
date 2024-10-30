@@ -30,7 +30,9 @@ import java.util.Date;
 public interface TimePeriod {
 
 	boolean isRelative();
+
 	int getRelativeTime(); /* -1 - 255 */
+
 	Date getAbsoluteTime(); /* to be formatted to yymmddhhmmss */
 
 }

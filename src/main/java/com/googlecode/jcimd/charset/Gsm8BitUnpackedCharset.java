@@ -32,14 +32,14 @@ public class Gsm8BitUnpackedCharset extends Charset {
 	private final int[] CHAR_TO_BYTE;
 
 	protected Gsm8BitUnpackedCharset(
-			String canonicalName, String[] aliases,
-			char[] byteToChar, int[] charToByte, char[] byteToEscapedChar) {
+		String canonicalName, String[] aliases,
+		char[] byteToChar, int[] charToByte, char[] byteToEscapedChar) {
 		super(canonicalName, aliases);
 		this.BYTE_TO_CHAR = byteToChar;
 		this.CHAR_TO_BYTE = charToByte;
 		this.BYTE_TO_ESCAPED_CHAR = byteToEscapedChar;
 	}
-	
+
 	@Override
 	public boolean contains(Charset cs) {
 		return this.getClass().isInstance(cs);
@@ -83,7 +83,7 @@ public class Gsm8BitUnpackedCharset extends Charset {
 			}
 			return CoderResult.UNDERFLOW;
 		}
-		
+
 	}
 
 	protected class Decoder8Bit extends CharsetDecoder {
