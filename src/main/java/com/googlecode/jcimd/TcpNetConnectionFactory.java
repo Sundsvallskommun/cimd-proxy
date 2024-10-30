@@ -45,12 +45,12 @@ public class TcpNetConnectionFactory implements ConnectionFactory {
 	private Executor executor;
 
 	public TcpNetConnectionFactory(
-			String host, int port, String username, String password) {
+		String host, int port, String username, String password) {
 		this(host, port, username, password, 0);
 	}
 
 	public TcpNetConnectionFactory(String host, int port,
-			String username, String password, int timeout) {
+		String username, String password, int timeout) {
 		super();
 		this.host = host;
 		this.port = port;
@@ -75,9 +75,9 @@ public class TcpNetConnectionFactory implements ConnectionFactory {
 		}
 		PacketSerializer serializer = new PacketSerializer();
 		serializer.setSequenceNumberGenerator(
-				new ApplicationPacketSequenceNumberGenerator());
+			new ApplicationPacketSequenceNumberGenerator());
 		TcpNetConnection newConnection = new TcpNetConnection(
-				socket, serializer, this.username, this.password);
+			socket, serializer, this.username, this.password);
 		this.executor.execute(newConnection);
 		newConnection.login();
 		return newConnection;

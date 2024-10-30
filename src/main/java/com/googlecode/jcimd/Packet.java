@@ -24,6 +24,7 @@ import java.util.Arrays;
  * <p>
  * An example CIMD message packet looks like the following:
  * </p>
+ * 
  * <pre>
  * &lt;STX&gt;03:007&lt;TAB&gt;021:12345678&lt;TAB&gt;033:hello&lt;TAB&gt;&lt;ETX&gt;
  * &lt;STX&gt;53:007&lt;TAB&gt;021:12345678&lt;TAB&gt;060:060:971107131212&lt;TAB&gt;&lt;ETX&gt;
@@ -31,7 +32,7 @@ import java.util.Arrays;
  *
  * @author Lorenzo Dee
  *
- * @see PacketSerializer
+ * @see    PacketSerializer
  */
 public class Packet {
 
@@ -89,7 +90,7 @@ public class Packet {
 	 * number when sending.
 	 *
 	 * @param operationCode the operation code (0 - 99)
-	 * @param parameters the parameters
+	 * @param parameters    the parameters
 	 */
 	public Packet(int operationCode, Parameter... parameters) {
 		this(operationCode, null, parameters);
@@ -98,10 +99,11 @@ public class Packet {
 	/**
 	 * Constructs a packet with the given operation code, sequence number,
 	 * and parameters.
-	 * @param operationCode the operation code (0 - 99)
+	 * 
+	 * @param operationCode  the operation code (0 - 99)
 	 * @param sequenceNumber the sequence number (if <code>null</code>, it
-	 * indicates that a generated sequence number be used when sending.
-	 * @param parameters the parameters
+	 *                       indicates that a generated sequence number be used when sending.
+	 * @param parameters     the parameters
 	 */
 	public Packet(int operationCode, Integer sequenceNumber, Parameter... parameters) {
 		if (operationCode <= 0 || operationCode > 99) {
@@ -126,8 +128,9 @@ public class Packet {
 	 * <li>Nack message</li>
 	 * <li>General error response message</li>
 	 * </ul>
+	 * 
 	 * @return <code>true</code> if this packet is a response message.
-	 *     Otherwise, <code>false</code> is returned.
+	 *         Otherwise, <code>false</code> is returned.
 	 */
 	public boolean isResponse() {
 		return (operationCode >= 50);
@@ -136,24 +139,26 @@ public class Packet {
 	/**
 	 * Returns <code>true</code> if this packet is a <em>positive</em>
 	 * response message.
+	 * 
 	 * @return <code>true</code> if this packet is a positive response
-	 * message. Otherwise, <code>false</code> is returned.
+	 *         message. Otherwise, <code>false</code> is returned.
 	 */
 	public boolean isPositiveResponse() {
 		return (operationCode >= 50 && operationCode < 90
-				&& !hasErrorParameter());
+			&& !hasErrorParameter());
 	}
 
 	/**
 	 * Returns <code>true</code> if this packet is a <em>negative</em>
 	 * response message.
+	 * 
 	 * @return <code>true</code> if this packet is a negative response
-	 * message. Otherwise, <code>false</code> is returned.
+	 *         message. Otherwise, <code>false</code> is returned.
 	 * @return
 	 */
 	public boolean isNegativeResponse() {
 		return (operationCode >= 50 && operationCode < 90
-				&& hasErrorParameter());
+			&& hasErrorParameter());
 	}
 
 	/**
@@ -161,6 +166,7 @@ public class Packet {
 	 * (i.e. parameter with type that starts with 9; 9xx). For example,
 	 * error code is parameter type 900. And 901 is for the optional
 	 * error text.
+	 * 
 	 * @return <code>true</code> if this packet contains an error parameter
 	 */
 	public boolean hasErrorParameter() {
@@ -175,6 +181,7 @@ public class Packet {
 	/**
 	 * Returns <code>true</code> if this packet is a general error response
 	 * (i.e. operation code is 98).
+	 * 
 	 * @return <code>true</code> if this packet is a general error response
 	 */
 	public boolean isGeneralErrorResponse() {
@@ -184,6 +191,7 @@ public class Packet {
 	/**
 	 * Returns <code>true</code> if this packet is a <em>nack</em>
 	 * (i.e. operation code is 99).
+	 * 
 	 * @return <code>true</code> if this packet is a <em>nack</em>
 	 */
 	public boolean isNack() {
@@ -234,7 +242,7 @@ public class Packet {
 		result = prime * result + operationCode;
 		result = prime * result + Arrays.hashCode(parameters);
 		result = prime * result
-				+ ((sequenceNumber == null) ? 0 : sequenceNumber.hashCode());
+			+ ((sequenceNumber == null) ? 0 : sequenceNumber.hashCode());
 		return result;
 	}
 

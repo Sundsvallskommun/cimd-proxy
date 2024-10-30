@@ -25,9 +25,10 @@ public interface ConnectionFactory {
 
 	/**
 	 * Returns a new CIMD connection.
-	 * @return a new CIMD connection.
+	 * 
+	 * @return           a new CIMD connection.
 	 * @throws Exception when an error occurs while
-	 * 		creating a new connection
+	 *                   creating a new connection
 	 */
 	Connection getConnection() throws Exception;
 

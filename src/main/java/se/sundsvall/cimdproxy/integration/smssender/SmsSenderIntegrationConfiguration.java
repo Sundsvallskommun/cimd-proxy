@@ -19,28 +19,28 @@ import feign.Request;
 @EnableConfigurationProperties(SmsSenderIntegrationProperties.class)
 class SmsSenderIntegrationConfiguration {
 
-    private final SmsSenderIntegrationProperties properties;
+	private final SmsSenderIntegrationProperties properties;
 
-    SmsSenderIntegrationConfiguration(final SmsSenderIntegrationProperties properties) {
-        this.properties = properties;
-    }
+	SmsSenderIntegrationConfiguration(final SmsSenderIntegrationProperties properties) {
+		this.properties = properties;
+	}
 
-    @Bean
-    FeignBuilderCustomizer customizer() {
-        return FeignMultiCustomizer.create()
-            .withRequestInterceptor(template -> template.query("flash", "true"))
-            .withRetryableOAuth2InterceptorForClientRegistration(ClientRegistration
-                .withRegistrationId(SmsSenderIntegration.INTEGRATION_NAME)
-                .tokenUri(properties.oAuth2().tokenUrl())
-                .clientId(properties.oAuth2().clientId())
-                .clientSecret(properties.oAuth2().clientSecret())
-                .authorizationGrantType(new AuthorizationGrantType(properties.oAuth2().grantType()))
-                .build())
-            .withErrorDecoder(new ProblemErrorDecoder(SmsSenderIntegration.INTEGRATION_NAME))
-            .withRequestOptions(new Request.Options(
-                properties.connectTimeout().toMillis(), TimeUnit.MILLISECONDS,
-                properties.readTimeout().toMillis(), TimeUnit.MILLISECONDS,
-                true))
-            .composeCustomizersToOne();
-    }
+	@Bean
+	FeignBuilderCustomizer customizer() {
+		return FeignMultiCustomizer.create()
+			.withRequestInterceptor(template -> template.query("flash", "true"))
+			.withRetryableOAuth2InterceptorForClientRegistration(ClientRegistration
+				.withRegistrationId(SmsSenderIntegration.INTEGRATION_NAME)
+				.tokenUri(properties.oAuth2().tokenUrl())
+				.clientId(properties.oAuth2().clientId())
+				.clientSecret(properties.oAuth2().clientSecret())
+				.authorizationGrantType(new AuthorizationGrantType(properties.oAuth2().grantType()))
+				.build())
+			.withErrorDecoder(new ProblemErrorDecoder(SmsSenderIntegration.INTEGRATION_NAME))
+			.withRequestOptions(new Request.Options(
+				properties.connectTimeout().toMillis(), TimeUnit.MILLISECONDS,
+				properties.readTimeout().toMillis(), TimeUnit.MILLISECONDS,
+				true))
+			.composeCustomizersToOne();
+	}
 }

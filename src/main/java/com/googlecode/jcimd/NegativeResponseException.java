@@ -30,17 +30,17 @@ public class NegativeResponseException extends SessionException {
 	private static final Map<Integer, String> errorCodeTexts = new HashMap<Integer, String>();
 
 	static {
-		errorCodeTexts.put(  0, "No error");
-		errorCodeTexts.put(  1, "Unexpected operation");
-		errorCodeTexts.put(  2, "Syntax error");
-		errorCodeTexts.put(  3, "Unsupported parameter error");
-		errorCodeTexts.put(  4, "Connection to SMS Center lost");
-		errorCodeTexts.put(  5, "No response from SMS Center");
-		errorCodeTexts.put(  6, "General system error");
-		errorCodeTexts.put(  7, "Cannot find information");
-		errorCodeTexts.put(  8, "Parameter formatting error");
-		errorCodeTexts.put(  9, "Requested operation failed");
-		errorCodeTexts.put( 10, "Temporary congestion error");
+		errorCodeTexts.put(0, "No error");
+		errorCodeTexts.put(1, "Unexpected operation");
+		errorCodeTexts.put(2, "Syntax error");
+		errorCodeTexts.put(3, "Unsupported parameter error");
+		errorCodeTexts.put(4, "Connection to SMS Center lost");
+		errorCodeTexts.put(5, "No response from SMS Center");
+		errorCodeTexts.put(6, "General system error");
+		errorCodeTexts.put(7, "Cannot find information");
+		errorCodeTexts.put(8, "Parameter formatting error");
+		errorCodeTexts.put(9, "Requested operation failed");
+		errorCodeTexts.put(10, "Temporary congestion error");
 	}
 
 	private final int errorCode;

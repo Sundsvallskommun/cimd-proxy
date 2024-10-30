@@ -56,9 +56,9 @@ public class GsmCharsetProvider extends CharsetProvider {
 			Arrays.fill(BYTE_TO_CHAR_ESCAPED_DEFAULT, NO_GSM_BYTE);
 			Arrays.fill(CHAR_TO_BYTE_SMALL_C_CEDILLA, NO_GSM_BYTE);
 			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(
-							Gsm7BitPackedCharset.class.getResourceAsStream("GSM0338.TXT"),
-							Charset.forName("US-ASCII")));
+				new InputStreamReader(
+					Gsm7BitPackedCharset.class.getResourceAsStream("GSM0338.TXT"),
+					Charset.forName("US-ASCII")));
 			try {
 				init(reader);
 			} finally {
@@ -66,7 +66,7 @@ public class GsmCharsetProvider extends CharsetProvider {
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(
-					"Error initializing GSM charset look-up table", e);
+				"Error initializing GSM charset look-up table", e);
 		}
 	}
 
@@ -101,21 +101,20 @@ public class GsmCharsetProvider extends CharsetProvider {
 				BYTE_TO_CHAR_ESCAPED_DEFAULT[index] = ch;
 				if (logger.isTraceEnabled()) {
 					logger.trace(String.format("(escaped) %d == %s", index,
-							(ch != 10 && ch != 12 && ch != 13) ? ch :
-								(ch == 10 ? "\\n" : (ch == 12 ? "0x0C (form feed)" : "\\r"))));
+						(ch != 10 && ch != 12 && ch != 13) ? ch : (ch == 10 ? "\\n" : (ch == 12 ? "0x0C (form feed)" : "\\r"))));
 				}
 			} else {
 				BYTE_TO_CHAR_SMALL_C_CEDILLA[index] = ch;
 				if (logger.isTraceEnabled()) {
 					logger.trace(String.format("%d == %s", index,
-							(ch != 10 && ch != 13) ? ch : (ch == 10 ? "\\n" : "\\r")));
+						(ch != 10 && ch != 13) ? ch : (ch == 10 ? "\\n" : "\\r")));
 				}
 			}
 			count++;
 		}
 		if (count < 128 && logger.isWarnEnabled()) {
 			logger.warn("Character look-up initialized with only "
-					+ count + " value(s) (expecting 128 values)");
+				+ count + " value(s) (expecting 128 values)");
 		}
 		return count;
 	}
@@ -125,40 +124,44 @@ public class GsmCharsetProvider extends CharsetProvider {
 
 	static {
 		Charset[] charsets = new Charset[] {
-				new Gsm7BitPackedCharset("GSM", new String[] {
-						"GSM-DEFAULT-ALPHABET", "GSM-0338", "GSM-DEFAULT", "GSM7", "GSM-7BIT"
-					},
-					BYTE_TO_CHAR_SMALL_C_CEDILLA,
-					CHAR_TO_BYTE_SMALL_C_CEDILLA,
-					BYTE_TO_CHAR_ESCAPED_DEFAULT),
-				new Gsm8BitUnpackedCharset("GSM-8BIT", new String[] {
-						// no aliases
-					},
-					BYTE_TO_CHAR_SMALL_C_CEDILLA,
-					CHAR_TO_BYTE_SMALL_C_CEDILLA,
-					BYTE_TO_CHAR_ESCAPED_DEFAULT)
+			new Gsm7BitPackedCharset("GSM", new String[] {
+				"GSM-DEFAULT-ALPHABET", "GSM-0338", "GSM-DEFAULT", "GSM7", "GSM-7BIT"
+			},
+				BYTE_TO_CHAR_SMALL_C_CEDILLA,
+				CHAR_TO_BYTE_SMALL_C_CEDILLA,
+				BYTE_TO_CHAR_ESCAPED_DEFAULT),
+			new Gsm8BitUnpackedCharset("GSM-8BIT", new String[] {
+			// no aliases
+			},
+				BYTE_TO_CHAR_SMALL_C_CEDILLA,
+				CHAR_TO_BYTE_SMALL_C_CEDILLA,
+				BYTE_TO_CHAR_ESCAPED_DEFAULT)
 		};
 		GsmCharsetProvider.charsets.addAll(Arrays.asList(charsets));
 		for (Charset charset : charsets) {
 			GsmCharsetProvider.charsetsMap.put(
-					charset.name().toLowerCase(), charset);
+				charset.name().toLowerCase(), charset);
 			for (String alias : charset.aliases()) {
 				GsmCharsetProvider.charsetsMap.put(
-						alias.toLowerCase(), charset);
+					alias.toLowerCase(), charset);
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.nio.charset.spi.CharsetProvider#charsetForName(java.lang.String)
 	 */
 	@Override
 	public Charset charsetForName(String charsetName) {
 		return GsmCharsetProvider.charsetsMap.get(
-				charsetName.toLowerCase());
+			charsetName.toLowerCase());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.nio.charset.spi.CharsetProvider#charsets()
 	 */
 	@Override
@@ -171,10 +174,10 @@ public class GsmCharsetProvider extends CharsetProvider {
 	 * sequence as GSM 3.38 (7-bit) default alphabet. Returns -1 if the
 	 * given sequence contains a character that cannot be encoded.
 	 *
-	 * @param s the given character sequence
-	 * @return the number of bytes needed to encode the given character
-	 * sequence as GSM 3.38 (7-bit) default alphabet. Otherwise, -1 is
-	 * returned.
+	 * @param  s the given character sequence
+	 * @return   the number of bytes needed to encode the given character
+	 *           sequence as GSM 3.38 (7-bit) default alphabet. Otherwise, -1 is
+	 *           returned.
 	 */
 	public static int countGsm7BitCharacterBytes(CharSequence s) {
 		int length = s.length();
@@ -196,10 +199,10 @@ public class GsmCharsetProvider extends CharsetProvider {
 	 * as GSM 3.38 (7-bit) default alphabet. Returns -1 if the
 	 * given character cannot be encoded.
 	 * 
-	 * @param ch the given character
-	 * @return number of bits needed to encode the given character
-	 * as GSM 3.38 (7-bit) default alphabet. Returns -1 if the
-	 * given character cannot be encoded.
+	 * @param  ch the given character
+	 * @return    number of bits needed to encode the given character
+	 *            as GSM 3.38 (7-bit) default alphabet. Returns -1 if the
+	 *            given character cannot be encoded.
 	 */
 	public static int countGsm7BitCharacterBits(char ch) {
 		int bits = 0;

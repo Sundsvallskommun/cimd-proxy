@@ -37,24 +37,25 @@ public interface UserData {
 	 * The returned byte array (if not <code>null</code>) is added
 	 * as parameter 32 (treated as hexadecimal parameter type which is
 	 * converted to hexadecimal string).
+	 * 
 	 * @return the user data header
 	 */
 	byte[] getHeader();
 
 	// TODO: Always return bytes. This interface should be responsible for doing so.
 	// 0000 0000
-	//   ^  ^
-	//   |  |
-	//   |  +-- Bits 3 and 2:
-	//   |        00 = Default alphabet (GSM)
-	//   |        01 = 8-bit data
-	//   |        10 = UCS2 (16-bit)
-	//   |        11 = Reserved
-	//   |
-	//   +-- Bit 5: 0 = not compressed; 1 = compressed (160 septets packed into 140 octets)
+	// ^ ^
+	// | |
+	// | +-- Bits 3 and 2:
+	// | 00 = Default alphabet (GSM)
+	// | 01 = 8-bit data
+	// | 10 = UCS2 (16-bit)
+	// | 11 = Reserved
+	// |
+	// +-- Bit 5: 0 = not compressed; 1 = compressed (160 septets packed into 140 octets)
 
 	// #getDataCodingScheme() can return 0x20 for 160 septets packed into 140 octets
-	
+
 	/*
 	 * class StringUserData
 	 * + automatically encodes to compressed GSM (default alphabet)
@@ -67,8 +68,9 @@ public interface UserData {
 	/**
 	 * Returns <code>true</code> if user data contains
 	 * binary data.
+	 * 
 	 * @return <code>true</code> if user data contains
-	 * binary data.
+	 *         binary data.
 	 */
 	boolean isBodyBinary();
 
@@ -77,6 +79,7 @@ public interface UserData {
 	 * {@link #isBodyBinary()} returns <code>false</code>.
 	 * <p>
 	 * The returned string is added as parameter 33.
+	 * 
 	 * @return the string user data
 	 */
 	String getBody();
@@ -88,6 +91,7 @@ public interface UserData {
 	 * The returned byte array is added as parameter 34
 	 * (treated as hexadecimal parameter type which is
 	 * converted to hexadecimal string).
+	 * 
 	 * @return the binary user data
 	 */
 	byte[] getBinaryBody();

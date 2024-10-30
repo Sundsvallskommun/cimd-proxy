@@ -9,12 +9,11 @@ import generated.se.sundsvall.smssender.SendSmsRequest;
 import generated.se.sundsvall.smssender.SendSmsResponse;
 
 @FeignClient(
-    name = SmsSenderIntegration.INTEGRATION_NAME,
-    url = "${integration.sms-sender.base-url}",
-    configuration = SmsSenderIntegrationConfiguration.class
-)
+	name = SmsSenderIntegration.INTEGRATION_NAME,
+	url = "${integration.sms-sender.base-url}",
+	configuration = SmsSenderIntegrationConfiguration.class)
 interface SmsSenderClient {
 
-    @PostMapping("/{municipalityId}/send/sms")
-    SendSmsResponse sendSms(@PathVariable("municipalityId") final String municipalityId, @RequestBody final SendSmsRequest request);
+	@PostMapping("/{municipalityId}/send/sms")
+	SendSmsResponse sendSms(@PathVariable("municipalityId") final String municipalityId, @RequestBody final SendSmsRequest request);
 }

@@ -32,8 +32,8 @@ public class Gsm7BitPackedCharset extends Charset {
 	private final int[] CHAR_TO_BYTE;
 
 	protected Gsm7BitPackedCharset(
-			String canonicalName, String[] aliases,
-			char[] byteToChar, int[] charToByte, char[] byteToEscapedChar) {
+		String canonicalName, String[] aliases,
+		char[] byteToChar, int[] charToByte, char[] byteToEscapedChar) {
 		super(canonicalName, aliases);
 		this.BYTE_TO_CHAR = byteToChar;
 		this.CHAR_TO_BYTE = charToByte;
@@ -65,7 +65,7 @@ public class Gsm7BitPackedCharset extends Charset {
 			// 14 bits for escaped characters
 			// average bits per character is 10.5
 			// that's about 1.3 bytes per character
-			super(charset, ((7+14)/2f)/8f, 2f);
+			super(charset, ((7 + 14) / 2f) / 8f, 2f);
 		}
 
 		@Override
@@ -122,7 +122,7 @@ public class Gsm7BitPackedCharset extends Charset {
 		private int nBits = 0;
 
 		protected Decoder7Bit(Charset charset) {
-			super(charset, 8/7f, 2f);
+			super(charset, 8 / 7f, 2f);
 		}
 
 		@Override
@@ -172,7 +172,7 @@ public class Gsm7BitPackedCharset extends Charset {
 				if (out.get(pos - 1) == '@')
 					out.position(pos - 1);
 			}
-            return CoderResult.UNDERFLOW;
+			return CoderResult.UNDERFLOW;
 		}
 
 	}

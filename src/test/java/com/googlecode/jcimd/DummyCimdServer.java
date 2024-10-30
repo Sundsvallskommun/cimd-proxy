@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class DummyCimdServer {
-	
+
 	private static final Log LOG = LogFactory.getLog(DummyCimdServer.class);
 
 	private final int port;
@@ -62,8 +62,8 @@ public class DummyCimdServer {
 							LOG.info("Starting session with " + socket.getInetAddress().getHostAddress() + ":" + socket.hashCode());
 						}
 						Session session = new Session(socket);
-						//List<Session> sessions = ...;
-						//sessions.add(session);
+						// List<Session> sessions = ...;
+						// sessions.add(session);
 						new Thread(session).start();
 					} catch (SocketException e) {
 						// Ignore, as this was due to #stop
@@ -86,7 +86,7 @@ public class DummyCimdServer {
 			serverSocket.close();
 		}
 	}
-	
+
 	class Session implements Runnable {
 
 		private final Socket socket;
@@ -103,8 +103,8 @@ public class DummyCimdServer {
 		public void run() {
 			try {
 				while (!Thread.currentThread().isInterrupted()
-						&& socket.isConnected()
-						&& !socket.isClosed()) {
+					&& socket.isConnected()
+					&& !socket.isClosed()) {
 					Packet request = null;
 					try {
 						if (LOG.isInfoEnabled()) {
@@ -128,14 +128,14 @@ public class DummyCimdServer {
 						case Packet.OP_LOGOUT:
 						case Packet.OP_ALIVE:
 							response = new Packet(
-									request.getOperationCode() + 50,
-									request.getSequenceNumber());
+								request.getOperationCode() + 50,
+								request.getSequenceNumber());
 							break;
 						case Packet.OP_SUBMIT_MESSAGE:
 							response = new Packet(
-									request.getOperationCode() + 50,
-									request.getSequenceNumber(),
-									new Parameter(60, new SimpleDateFormat("yyMMddHHmmss").format(new Date())));
+								request.getOperationCode() + 50,
+								request.getSequenceNumber(),
+								new Parameter(60, new SimpleDateFormat("yyMMddHHmmss").format(new Date())));
 							break;
 						default:
 							response = new Packet(Packet.OP_GENERAL_ERROR_RESPONSE);

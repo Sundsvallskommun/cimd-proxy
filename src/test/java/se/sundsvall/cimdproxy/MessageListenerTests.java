@@ -20,39 +20,39 @@ import se.sundsvall.cimdproxy.integration.smssender.SmsSenderIntegration;
 @ExtendWith(MockitoExtension.class)
 class MessageListenerTests {
 
-    @Mock
-    private CIMD mockCIMD;
-    @Mock
-    private SmsSenderIntegration mockSmsSenderIntegration;
+	@Mock
+	private CIMD mockCIMD;
+	@Mock
+	private SmsSenderIntegration mockSmsSenderIntegration;
 
-    private MessageListener messageListener;
+	private MessageListener messageListener;
 
-    @BeforeEach
-    void setUp() {
-        messageListener = new MessageListener(mockCIMD, mockSmsSenderIntegration);
+	@BeforeEach
+	void setUp() {
+		messageListener = new MessageListener(mockCIMD, mockSmsSenderIntegration);
 
-        verify(mockCIMD, times(1)).start(any(CIMDMessageListener.class));
-    }
+		verify(mockCIMD, times(1)).start(any(CIMDMessageListener.class));
+	}
 
-    @Test
-    void testHandleMessageWhenSmsSenderIntegrationSucceeds() {
-        when(mockSmsSenderIntegration.sendSms(any(String.class), any(String.class)))
-            .thenReturn(true);
+	@Test
+	void testHandleMessageWhenSmsSenderIntegrationSucceeds() {
+		when(mockSmsSenderIntegration.sendSms(any(String.class), any(String.class)))
+			.thenReturn(true);
 
-        var result = messageListener.handleMessage(new CIMDMessage("", ""));
-        assertThat(result).isTrue();
+		var result = messageListener.handleMessage(new CIMDMessage("", ""));
+		assertThat(result).isTrue();
 
-        verify(mockSmsSenderIntegration, times(1)).sendSms(any(String.class), any(String.class));
-    }
+		verify(mockSmsSenderIntegration, times(1)).sendSms(any(String.class), any(String.class));
+	}
 
-    @Test
-    void testHandleMessageWhenSmsSenderIntegrationFails() {
-        when(mockSmsSenderIntegration.sendSms(any(String.class), any(String.class)))
-            .thenReturn(false);
+	@Test
+	void testHandleMessageWhenSmsSenderIntegrationFails() {
+		when(mockSmsSenderIntegration.sendSms(any(String.class), any(String.class)))
+			.thenReturn(false);
 
-        var result = messageListener.handleMessage(new CIMDMessage("", ""));
-        assertThat(result).isFalse();
+		var result = messageListener.handleMessage(new CIMDMessage("", ""));
+		assertThat(result).isFalse();
 
-        verify(mockSmsSenderIntegration, times(1)).sendSms(any(String.class), any(String.class));
-    }
+		verify(mockSmsSenderIntegration, times(1)).sendSms(any(String.class), any(String.class));
+	}
 }

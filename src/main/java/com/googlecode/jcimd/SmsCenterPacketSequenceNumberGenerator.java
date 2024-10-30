@@ -24,12 +24,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author Lorenzo Dee
  */
-public class SmsCenterPacketSequenceNumberGenerator implements
-		PacketSequenceNumberGenerator {
+public class SmsCenterPacketSequenceNumberGenerator implements PacketSequenceNumberGenerator {
 
 	private final AtomicInteger sequence = new AtomicInteger(0);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.springframework.integration.cimd.PacketSequenceNumberGenerator#nextSequence()
 	 */
 	@Override

@@ -65,7 +65,9 @@ class TextMessageUserDataFactoryTest {
 		assertThat(ud.getHeader()).isNull();
 		assertThat(ud.isBodyBinary()).isTrue();
 
-		assertThat(ud.getBinaryBody()).isEqualTo(new byte[] { 0x4F, 0x60, 0x59, 0x7D });
+		assertThat(ud.getBinaryBody()).isEqualTo(new byte[] {
+			0x4F, 0x60, 0x59, 0x7D
+		});
 	}
 
 	@Test

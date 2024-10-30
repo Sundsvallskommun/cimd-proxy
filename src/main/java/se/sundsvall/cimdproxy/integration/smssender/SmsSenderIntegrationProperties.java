@@ -13,41 +13,29 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "integration.sms-sender")
 record SmsSenderIntegrationProperties(
 
-        @NotBlank
-        String baseUrl,
+	@NotBlank String baseUrl,
 
-        @NotBlank
-        String municipalityId,
+	@NotBlank String municipalityId,
 
-        @Valid
-        OAuth2 oAuth2,
+	@Valid OAuth2 oAuth2,
 
-        @Valid
-        Sms sms,
+	@Valid Sms sms,
 
-        @DefaultValue("PT15S")
-        Duration readTimeout,
+	@DefaultValue("PT15S") Duration readTimeout,
 
-        @DefaultValue("PT5S")
-        Duration connectTimeout) {
+	@DefaultValue("PT5S") Duration connectTimeout) {
 
-    record Sms(
+	record Sms(
 
-        @NotBlank
-        @DefaultValue("Sundsvall")
-        String from) { }
+		@NotBlank @DefaultValue("Sundsvall") String from) {}
 
-    record OAuth2(
+	record OAuth2(
 
-        @NotBlank
-        String tokenUrl,
+		@NotBlank String tokenUrl,
 
-        @NotBlank
-        String clientId,
+		@NotBlank String clientId,
 
-        @NotBlank
-        String clientSecret,
+		@NotBlank String clientSecret,
 
-        @DefaultValue("client_credentials")
-        String grantType) { }
+		@DefaultValue("client_credentials") String grantType) {}
 }

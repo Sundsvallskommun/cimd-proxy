@@ -48,8 +48,8 @@ public class TcpNetConnection implements Connection, Runnable {
 	private long replyTimeout = 10000;
 
 	public TcpNetConnection(Socket socket, PacketSerializer serializer,
-			String username, String password)
-	throws Exception {
+		String username, String password)
+		throws Exception {
 		if (socket == null) {
 			throw new IllegalArgumentException("socket cannot be null");
 		}
@@ -68,8 +68,8 @@ public class TcpNetConnection implements Connection, Runnable {
 
 	void login() throws Exception {
 		Packet response = send(new Packet(Packet.OP_LOGIN,
-				new Parameter(Parameter.USER_IDENTITY, this.username),
-				new Parameter(Parameter.PASSWORD, this.password)));
+			new Parameter(Parameter.USER_IDENTITY, this.username),
+			new Parameter(Parameter.PASSWORD, this.password)));
 		if (!response.isPositiveResponse()) {
 			throw new IOException("Failed to login");
 		} else {
@@ -134,8 +134,8 @@ public class TcpNetConnection implements Connection, Runnable {
 			} catch (Exception e) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Read exception " +
-							 e.getClass().getName() + 
-						     ": " + e.getCause() + ": " + e.getMessage());
+						e.getClass().getName() +
+						": " + e.getCause() + ": " + e.getMessage());
 				}
 				// since it's a socket exception, let's close without sending a logout operation
 				closeSocket();
@@ -170,7 +170,8 @@ public class TcpNetConnection implements Connection, Runnable {
 
 		/**
 		 * Sender blocks here until the reply is received, or we time out
-		 * @return The return message or null if we time out
+		 * 
+		 * @return           The return message or null if we time out
 		 * @throws Exception
 		 */
 		public Packet getReply() throws Exception {
