@@ -1,19 +1,18 @@
 package se.sundsvall.cimdproxy.cimd;
 
-import static java.util.Objects.requireNonNull;
-
-import java.security.cert.X509Certificate;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLException;
 
+import io.netty.handler.ssl.ClientAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
-import se.sundsvall.cimdproxy.cimd.util.SslUtil;
 import se.sundsvall.cimdproxy.configuration.CIMDProperties;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -37,36 +36,45 @@ public class CIMD implements DisposableBean {
 	private final int port;
 	private final boolean sslEnabled;
 	private final boolean useCimdChecksum;
-	private SslContext sslContext;
+	private final SslContext sslContext;
 
 	private final NioEventLoopGroup parentEventLoopGroup = new NioEventLoopGroup();
 	private final NioEventLoopGroup clientEventLoopGroup = new NioEventLoopGroup();
 
 	private ChannelFuture channelFuture;
 
-	CIMD(final CIMDProperties properties) throws Exception {
+	CIMD(final CIMDProperties properties) throws SSLException {
 		port = properties.port();
 		sslEnabled = properties.ssl().enabled();
 		useCimdChecksum = properties.useCimdChecksum();
 
 		if (sslEnabled) {
-			var keyStoreProperties = properties.ssl().keyStore();
+			// Note: serverCert should contain full chain
+			InputStream certInputStream = new ByteArrayInputStream(Base64.getDecoder().decode(properties.ssl().serverCert()));
+			InputStream keyInputStream = new ByteArrayInputStream(Base64.getDecoder().decode(properties.ssl().serverKey()));
 
-			var keyStoreType = keyStoreProperties.type();
-			var keyStoreAlias = keyStoreProperties.alias();
-			var keyStorePassword = keyStoreProperties.password();
-			var keyStoreData = Base64.getDecoder().decode(keyStoreProperties.data());
-			LOG.info("KeyStore: '{}'", keyStoreProperties.data());
-			var privateKey = requireNonNull(SslUtil.getPrivateKey(keyStoreType, keyStoreAlias, keyStoreData, keyStorePassword), "Unable to obtain private key");
-			var cert = requireNonNull((X509Certificate) SslUtil.getCertificate(keyStoreType, keyStoreAlias, keyStoreData, keyStorePassword), "Unable to obtain certificate");
+			var sslContextBuilder = SslContextBuilder.forServer(certInputStream, keyInputStream, properties.ssl().serverKeyPassword());
 
-			var sslContextBuilder = SslContextBuilder.forServer(privateKey, keyStorePassword, cert);
-			if (properties.ssl().trustAll()) {
-				sslContextBuilder.trustManager(new NoOpTrustManager());
+			if (properties.ssl().trustedCert() != null) {
+				// Assume Client certificate authentication (two-way SSL) when trustedCert is set
+				// Verify with cmd "openssl s_client -cert <cert-file> -key <key-file> -showcerts -connect <address>"
+				// For self-signed certs add flag -CAfile <cert-file>
+				LOG.info("Only accepting trusted clients present in truststore (two-way SSL)");
+				var truststoreInputStream = new ByteArrayInputStream(Base64.getDecoder().decode(properties.ssl().trustedCert()));
+				sslContextBuilder
+					.clientAuth(ClientAuth.REQUIRE)
+					.trustManager(truststoreInputStream);
 			} else {
-				sslContextBuilder.trustManager(cert);
+				// Verify with cmd "openssl s_client -showcerts -connect <address>"
+				// For self-signed certs add flag -CAfile <cert-file>
+				LOG.info("Accepting all clients (one-way SSL)");
+				sslContextBuilder
+					.clientAuth(ClientAuth.NONE);
 			}
+
 			sslContext = sslContextBuilder.build();
+		} else {
+			sslContext = null;
 		}
 	}
 
@@ -81,7 +89,7 @@ public class CIMD implements DisposableBean {
 					protected void initChannel(final SocketChannel socketChannel) {
 						var pipeline = socketChannel.pipeline();
 
-						if (sslEnabled) {
+						if (sslContext != null) {
 							pipeline.addLast(sslContext.newHandler(socketChannel.alloc()));
 						}
 
@@ -120,20 +128,6 @@ public class CIMD implements DisposableBean {
 			parentEventLoopGroup.shutdownGracefully();
 
 			LOG.info("CIMD shut down");
-		}
-	}
-
-	private static class NoOpTrustManager implements X509TrustManager {
-
-		@Override
-		public void checkClientTrusted(final X509Certificate[] chain, final String authType) {}
-
-		@Override
-		public void checkServerTrusted(final X509Certificate[] chain, final String authType) {}
-
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			return new X509Certificate[0];
 		}
 	}
 }
