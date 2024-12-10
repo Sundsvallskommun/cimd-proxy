@@ -1,20 +1,5 @@
 package se.sundsvall.cimdproxy.cimd;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Base64;
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLException;
-
-import io.netty.handler.ssl.ClientAuth;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.stereotype.Component;
-
-import se.sundsvall.cimdproxy.configuration.CIMDProperties;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -22,8 +7,19 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Base64;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.stereotype.Component;
+import se.sundsvall.cimdproxy.configuration.CIMDProperties;
 
 /**
  * CIMD server.

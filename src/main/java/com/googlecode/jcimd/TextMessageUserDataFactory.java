@@ -16,17 +16,15 @@
  */
 package com.googlecode.jcimd;
 
+import com.googlecode.jcimd.charset.GsmCharsetProvider;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Random;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.googlecode.jcimd.charset.GsmCharsetProvider;
 
 /**
  * User data factory for text messages.

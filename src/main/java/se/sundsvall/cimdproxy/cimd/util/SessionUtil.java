@@ -1,18 +1,15 @@
 package se.sundsvall.cimdproxy.cimd.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.googlecode.jcimd.PacketSequenceNumberGenerator;
 import com.googlecode.jcimd.SmsCenterPacketSequenceNumberGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import se.sundsvall.cimdproxy.cimd.Session;
-import se.sundsvall.cimdproxy.cimd.SessionAttribute;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
+import java.util.HashMap;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.sundsvall.cimdproxy.cimd.Session;
+import se.sundsvall.cimdproxy.cimd.SessionAttribute;
 
 public final class SessionUtil {
 

@@ -4,7 +4,6 @@ import static com.googlecode.jcimd.PacketSerializer.serializePacket;
 import static se.sundsvall.cimdproxy.cimd.util.SessionUtil.getPacketSequenceNumberGenerator;
 
 import com.googlecode.jcimd.Packet;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;

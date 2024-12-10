@@ -1,15 +1,13 @@
 package se.sundsvall.cimdproxy.cimd;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.googlecode.jcimd.Packet;
 import com.googlecode.jcimd.PacketSerializer;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * CIMD packet decoder.

@@ -1,10 +1,8 @@
 package se.sundsvall.cimdproxy.integration.smssender;
 
-import java.time.Duration;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-
+import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;

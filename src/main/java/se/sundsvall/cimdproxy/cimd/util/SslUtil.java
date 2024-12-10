@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-
 import se.sundsvall.cimdproxy.cimd.exception.CIMDException;
 
 public final class SslUtil {

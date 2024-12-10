@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
-
 import org.junit.jupiter.api.Test;
 
 class AsciiUtilsTest {

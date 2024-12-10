@@ -20,9 +20,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
 import javax.net.SocketFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

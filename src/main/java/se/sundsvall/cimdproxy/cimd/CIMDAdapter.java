@@ -1,18 +1,15 @@
 package se.sundsvall.cimdproxy.cimd;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.googlecode.jcimd.Packet;
 import com.googlecode.jcimd.Parameter;
-
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.sundsvall.cimdproxy.cimd.util.SessionUtil;
 
 /**

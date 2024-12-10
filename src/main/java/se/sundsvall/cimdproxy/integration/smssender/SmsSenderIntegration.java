@@ -1,12 +1,11 @@
 package se.sundsvall.cimdproxy.integration.smssender;
 
+import generated.se.sundsvall.smssender.SendSmsRequest;
+import generated.se.sundsvall.smssender.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import generated.se.sundsvall.smssender.SendSmsRequest;
-import generated.se.sundsvall.smssender.Sender;
 
 @Component
 @EnableConfigurationProperties(SmsSenderIntegrationProperties.class)

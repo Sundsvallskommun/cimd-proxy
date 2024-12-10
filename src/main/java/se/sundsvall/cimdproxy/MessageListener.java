@@ -1,7 +1,6 @@
 package se.sundsvall.cimdproxy;
 
 import org.springframework.stereotype.Component;
-
 import se.sundsvall.cimdproxy.cimd.CIMD;
 import se.sundsvall.cimdproxy.cimd.CIMDMessage;
 import se.sundsvall.cimdproxy.cimd.CIMDMessageListener;

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import se.sundsvall.cimdproxy.cimd.CIMD;
 import se.sundsvall.cimdproxy.cimd.CIMDMessage;
 import se.sundsvall.cimdproxy.cimd.CIMDMessageListener;
