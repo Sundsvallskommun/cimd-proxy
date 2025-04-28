@@ -27,9 +27,11 @@ public class CIMD implements DisposableBean {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CIMD.class);
 
-	static final String SSL_BUNDLE_NAME = "cimd";
+	static final String SERVER_BUNDLE_NAME = "server";
+	static final String CLIENT_BUNDLE_NAME = "client";
 
 	private final int port;
+	private final boolean sslEnabled;
 	private final boolean useCimdChecksum;
 	private final SslContext sslContext;
 
@@ -40,15 +42,33 @@ public class CIMD implements DisposableBean {
 
 	CIMD(final CIMDProperties properties, final SslBundles sslBundles) throws SSLException {
 		port = properties.port();
+		sslEnabled = properties.ssl().enabled();
 		useCimdChecksum = properties.useCimdChecksum();
 
-		var sslBundle = sslBundles.getBundle(SSL_BUNDLE_NAME);
-		var sslManagerBundle = sslBundle.getManagers();
+		if (sslEnabled && sslBundles.getBundleNames().contains(SERVER_BUNDLE_NAME)) {
+			var sslServerBundle = sslBundles.getBundle(SERVER_BUNDLE_NAME);
+			var sslContextBuilder = SslContextBuilder.forServer(sslServerBundle.getManagers().getKeyManagerFactory());
 
-		sslContext = SslContextBuilder.forServer(sslManagerBundle.getKeyManagerFactory())
-			.clientAuth(ClientAuth.REQUIRE)
-			.trustManager(sslManagerBundle.getTrustManagerFactory())
-			.build();
+			if (sslBundles.getBundleNames().contains(CLIENT_BUNDLE_NAME)) {
+				var sslClientBundle = sslBundles.getBundle(CLIENT_BUNDLE_NAME);
+
+				// Assume Client certificate authentication (two-way SSL) when trustedCert is set
+				// Verify with cmd "openssl s_client -cert <cert-file> -key <key-file> -showcerts -connect <address>"
+				// For self-signed certs add flag -CAfile <cert-file>
+				LOG.info("Only accepting trusted clients present in truststore (two-way SSL)");
+				sslContextBuilder
+					.clientAuth(ClientAuth.REQUIRE)
+					.trustManager(sslClientBundle.getManagers().getTrustManagerFactory());
+			} else {
+				// Verify with cmd "openssl s_client -showcerts -connect <address>"
+				// For self-signed certs add flag -CAfile <cert-file>
+				sslContextBuilder.clientAuth(ClientAuth.REQUIRE);
+			}
+
+			sslContext = sslContextBuilder.build();
+		} else {
+			sslContext = null;
+		}
 	}
 
 	public void start(final CIMDMessageListener listener) {
@@ -77,7 +97,7 @@ public class CIMD implements DisposableBean {
 				.bind(port)
 				.sync();
 
-			LOG.info("CIMD listening on port {} using SSL", port);
+			LOG.info("CIMD listening on port {}{}", port, sslEnabled ? " (using SSL)" : "");
 		} catch (final InterruptedException interruptedException) {
 			Thread.currentThread().interrupt();
 		} catch (final Exception e) {

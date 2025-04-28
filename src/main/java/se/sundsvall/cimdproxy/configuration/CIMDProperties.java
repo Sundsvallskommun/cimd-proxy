@@ -1,5 +1,7 @@
 package se.sundsvall.cimdproxy.configuration;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
@@ -10,4 +12,9 @@ public record CIMDProperties(
 
 	@DefaultValue("9971") int port,
 
-	@DefaultValue("true") boolean useCimdChecksum) {}
+	@Valid @NotNull SSL ssl,
+
+	@DefaultValue("true") boolean useCimdChecksum) {
+
+	public record SSL(@DefaultValue("false") boolean enabled) {}
+}
