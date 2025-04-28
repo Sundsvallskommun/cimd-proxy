@@ -1,0 +1,35 @@
+{
+	"request": {
+		"headers": {
+			"Authorization": {
+				"equalTo": "Bearer 0000000000000000AAAAAAAAAAAAAAAA"
+			}
+		},
+		"method": "POST",
+		"bodyPatterns": [
+			{
+				"equalToJson": {
+					"sender": {
+						"name": "mguard-it-test"
+					},
+					"mobileNumber": "+46701234567",
+					"priority": "NORMAL",
+					"message": "Hello, there!!"
+				}
+			}
+		],
+		"urlPath": "/sms-sender/1984/send/sms",
+		"queryParameters": {
+			"flash": {
+				"equalTo": "true"
+			}
+		}
+	},
+	"response": {
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"bodyFileName": "test2_failureResponseFromSmsSender/responses/sms-sender.json",
+		"status": 200
+	}
+}

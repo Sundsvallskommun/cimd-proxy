@@ -1,0 +1,20 @@
+spring:
+  main:
+    banner-mode: off
+
+cimd:
+  port: 9971
+  use-cimd-checksum: true
+  ssl:
+    enabled: false
+
+integration:
+  sms-sender:
+    sms:
+      from: mguard-it-test
+    base-url: http://localhost:${wiremock.server.port}/sms-sender
+    oauth2:
+      token-url: http://localhost:${wiremock.server.port}/token
+      client-id: someClientId
+      client-secret: someClientSecret
+    municipality-id: 1984
