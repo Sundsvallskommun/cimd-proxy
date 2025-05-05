@@ -10,14 +10,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.stereotype.Component;
 import se.sundsvall.cimdproxy.configuration.CIMDProperties;
 
@@ -29,6 +27,9 @@ public class CIMD implements DisposableBean {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CIMD.class);
 
+	static final String SERVER_BUNDLE_NAME = "server";
+	static final String CLIENT_BUNDLE_NAME = "client";
+
 	private final int port;
 	private final boolean sslEnabled;
 	private final boolean useCimdChecksum;
@@ -39,33 +40,29 @@ public class CIMD implements DisposableBean {
 
 	private ChannelFuture channelFuture;
 
-	CIMD(final CIMDProperties properties) throws SSLException {
+	CIMD(final CIMDProperties properties, final SslBundles sslBundles) throws SSLException {
 		port = properties.port();
 		sslEnabled = properties.ssl().enabled();
 		useCimdChecksum = properties.useCimdChecksum();
 
-		if (sslEnabled) {
-			// Note: serverCert should contain full chain
-			InputStream certInputStream = new ByteArrayInputStream(Base64.getDecoder().decode(properties.ssl().serverCert()));
-			InputStream keyInputStream = new ByteArrayInputStream(Base64.getDecoder().decode(properties.ssl().serverKey()));
+		if (sslEnabled && sslBundles.getBundleNames().contains(SERVER_BUNDLE_NAME)) {
+			var sslServerBundle = sslBundles.getBundle(SERVER_BUNDLE_NAME);
+			var sslContextBuilder = SslContextBuilder.forServer(sslServerBundle.getManagers().getKeyManagerFactory());
 
-			var sslContextBuilder = SslContextBuilder.forServer(certInputStream, keyInputStream, properties.ssl().serverKeyPassword());
+			if (sslBundles.getBundleNames().contains(CLIENT_BUNDLE_NAME)) {
+				var sslClientBundle = sslBundles.getBundle(CLIENT_BUNDLE_NAME);
 
-			if (properties.ssl().trustedCert() != null) {
 				// Assume Client certificate authentication (two-way SSL) when trustedCert is set
 				// Verify with cmd "openssl s_client -cert <cert-file> -key <key-file> -showcerts -connect <address>"
 				// For self-signed certs add flag -CAfile <cert-file>
 				LOG.info("Only accepting trusted clients present in truststore (two-way SSL)");
-				var truststoreInputStream = new ByteArrayInputStream(Base64.getDecoder().decode(properties.ssl().trustedCert()));
 				sslContextBuilder
 					.clientAuth(ClientAuth.REQUIRE)
-					.trustManager(truststoreInputStream);
+					.trustManager(sslClientBundle.getManagers().getTrustManagerFactory());
 			} else {
 				// Verify with cmd "openssl s_client -showcerts -connect <address>"
 				// For self-signed certs add flag -CAfile <cert-file>
-				LOG.info("Accepting all clients (one-way SSL)");
-				sslContextBuilder
-					.clientAuth(ClientAuth.NONE);
+				sslContextBuilder.clientAuth(ClientAuth.REQUIRE);
 			}
 
 			sslContext = sslContextBuilder.build();
