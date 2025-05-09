@@ -62,7 +62,7 @@ public class CIMD implements DisposableBean {
 			} else {
 				// Verify with cmd "openssl s_client -showcerts -connect <address>"
 				// For self-signed certs add flag -CAfile <cert-file>
-				sslContextBuilder.clientAuth(ClientAuth.REQUIRE);
+				sslContextBuilder.clientAuth(ClientAuth.NONE);
 			}
 
 			sslContext = sslContextBuilder.build();
