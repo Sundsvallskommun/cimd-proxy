@@ -21,53 +21,52 @@ import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class CIMDIT extends AbstractAppTest {
 
-    private static int cimdPort;
+	private static int cimdPort;
 
-    @DynamicPropertySource
-    static public void registerCimdPort(final DynamicPropertyRegistry dynamicPropertyRegistry) {
-        cimdPort = TestSocketUtils.findAvailableTcpPort();
+	@DynamicPropertySource
+	public static void registerCimdPort(final DynamicPropertyRegistry dynamicPropertyRegistry) {
+		cimdPort = TestSocketUtils.findAvailableTcpPort();
 
-        dynamicPropertyRegistry.add("cimd.port", () -> cimdPort);
-    }
+		dynamicPropertyRegistry.add("cimd.port", () -> cimdPort);
+	}
 
-    @Test
-    void test1_successfulRequest() throws Exception {
-        // Create a dummy call, actually expecting a 404 NOT FOUND, just to get the WireMock (lifecycle) to play nice...
-        var call = setupCall()
-            .withServicePath("/")
-            .withHttpMethod(GET)
-            .withExpectedResponseStatus(NOT_FOUND);
+	@Test
+	void test1_successfulRequest() throws Exception {
+		// Create a dummy call, actually expecting a 404 NOT FOUND, just to get the WireMock (lifecycle) to play nice...
+		var call = setupCall()
+			.withServicePath("/")
+			.withHttpMethod(GET)
+			.withExpectedResponseStatus(NOT_FOUND);
 
-        // Create the CIMD test client
-        var testClient = new TestClient("localhost", cimdPort);
-        // Send a message
-        testClient.send("+46701234567", "Hello, there!!");
+		// Create the CIMD test client
+		var testClient = new TestClient("localhost", cimdPort);
+		// Send a message
+		testClient.send("+4670111111", "Hello, there!!");
 
-        // Verify that all configured stubs have been called
-        call.sendRequestAndVerifyResponse();
+		// Verify that all configured stubs have been called
+		call.sendRequestAndVerifyResponse();
 
-        // Verify that the test client has gotten the expected response
-        assertThat(testClient).hasSuccessResponse();
-    }
+		// Verify that the test client has gotten the expected response
+		assertThat(testClient).hasSuccessResponse();
+	}
 
+	@Test
+	void test2_failureResponseFromSmsSender() throws Exception {
+		// Create a dummy call, actually expecting a 404 NOT FOUND, just to get WireMock to play nice
+		var call = setupCall()
+			.withServicePath("/")
+			.withHttpMethod(GET)
+			.withExpectedResponseStatus(NOT_FOUND);
 
-    @Test
-    void test2_failureResponseFromSmsSender() throws Exception {
-        // Create a dummy call, actually expecting a 404 NOT FOUND, just to get WireMock to play nice
-        var call = setupCall()
-            .withServicePath("/")
-            .withHttpMethod(GET)
-            .withExpectedResponseStatus(NOT_FOUND);
+		// Create the CIMD test client
+		var testClient = new TestClient("localhost", cimdPort);
+		// Send a message
+		testClient.send("+4670222222", "Hello, there!!");
 
-        // Create the CIMD test client
-        var testClient = new TestClient("localhost", cimdPort);
-        // Send a message
-        testClient.send("+46701234567", "Hello, there!!");
+		// Verify that all configured stubs have been called
+		call.sendRequestAndVerifyResponse();
 
-        // Verify that all configured stubs have been called
-        call.sendRequestAndVerifyResponse();
-
-        // Verify that the test client has gotten the expected response
-        assertThat(testClient).hasFailureResponse();
-    }
+		// Verify that the test client has gotten the expected response
+		assertThat(testClient).hasFailureResponse();
+	}
 }
