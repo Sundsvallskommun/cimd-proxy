@@ -27,7 +27,7 @@ public class NegativeResponseException extends SessionException {
 
 	private static final long serialVersionUID = -3968988289576317472L;
 
-	private static final Map<Integer, String> errorCodeTexts = new HashMap<Integer, String>();
+	private static final Map<Integer, String> errorCodeTexts = new HashMap<>();
 
 	static {
 		errorCodeTexts.put(0, "No error");

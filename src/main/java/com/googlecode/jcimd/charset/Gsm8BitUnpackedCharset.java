@@ -27,17 +27,17 @@ import java.nio.charset.CoderResult;
  */
 public class Gsm8BitUnpackedCharset extends Charset {
 
-	private final char[] BYTE_TO_CHAR;
-	private final char[] BYTE_TO_ESCAPED_CHAR;
-	private final int[] CHAR_TO_BYTE;
+	private final char[] byteToChar;
+	private final char[] byteToEscapedChar;
+	private final int[] charToByte;
 
 	protected Gsm8BitUnpackedCharset(
 		String canonicalName, String[] aliases,
 		char[] byteToChar, int[] charToByte, char[] byteToEscapedChar) {
 		super(canonicalName, aliases);
-		this.BYTE_TO_CHAR = byteToChar;
-		this.CHAR_TO_BYTE = charToByte;
-		this.BYTE_TO_ESCAPED_CHAR = byteToEscapedChar;
+		this.byteToChar = byteToChar;
+		this.charToByte = charToByte;
+		this.byteToEscapedChar = byteToEscapedChar;
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class Gsm8BitUnpackedCharset extends Charset {
 					return CoderResult.OVERFLOW;
 				}
 				char ch = in.get();
-				int b = CHAR_TO_BYTE[ch];
+				int b = charToByte[ch];
 				if (b == GsmCharsetProvider.NO_GSM_BYTE) {
 					// If ch does not map to a GSM character, replace with a '?'
 					b = '?';
@@ -110,16 +110,16 @@ public class Gsm8BitUnpackedCharset extends Charset {
 					bite = in.get();
 					remaining--;
 					int i = bite & 0x7F;
-					char escapedChar = BYTE_TO_ESCAPED_CHAR[i];
+					char escapedChar = byteToEscapedChar[i];
 					if (escapedChar != GsmCharsetProvider.NO_GSM_BYTE) {
 						out.put(escapedChar);
 					} else {
 						// If invalid escape sequence use SPACE
 						out.put(' ');
-						out.put(BYTE_TO_CHAR[i]);
+						out.put(byteToChar[i]);
 					}
 				} else {
-					out.put(BYTE_TO_CHAR[bite & 0x7F]);
+					out.put(byteToChar[bite & 0x7F]);
 				}
 				remaining--;
 			}

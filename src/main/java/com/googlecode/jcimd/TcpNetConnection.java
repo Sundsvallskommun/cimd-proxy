@@ -35,7 +35,7 @@ public class TcpNetConnection implements Connection, Runnable {
 
 	private static final Log logger = LogFactory.getLog(TcpNetConnection.class);
 
-	private Map<String, AsyncReply> pendingReplies = new ConcurrentHashMap<String, AsyncReply>();
+	private Map<String, AsyncReply> pendingReplies = new ConcurrentHashMap<>();
 
 	private final Socket socket;
 	private final PacketSerializer serializer;

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 class TextMessageUserDataFactoryTest {
 
 	@Test
-	public void createsGsm7BitEncodedUserData() throws Exception {
+	void createsGsm7BitEncodedUserData() throws Exception {
 		final UserData[] uds = TextMessageUserDataFactory.newInstance("abc123 {curly}[square] brackets \u00FC");
 		assertThat(uds)
 			.isNotNull()
@@ -55,8 +55,9 @@ class TextMessageUserDataFactoryTest {
 	@Test
 	void createsUtf16EncodedUserDataWhenTextMessageContainsNonGsmCharacters() {
 		final UserData[] uds = TextMessageUserDataFactory.newInstance("\u4F60\u597D");
-		assertThat(uds).isNotNull();
-		assertThat(uds.length).isEqualTo(1);
+		assertThat(uds)
+			.isNotNull()
+			.hasSize(1);
 
 		final UserData ud = uds[0];
 		assertThat(ud).isNotNull();
@@ -72,12 +73,13 @@ class TextMessageUserDataFactoryTest {
 	@Test
 	void createsConcatenatedMessageUsingUserDataHeader() {
 		final UserData[] uds = TextMessageUserDataFactory.newInstance("first part" + ", 2nd part", 15);
-		assertThat(uds).isNotNull();
-		assertThat(uds.length).isEqualTo(2);
+		assertThat(uds)
+			.isNotNull()
+			.hasSize(2);
 
 		assertThat(uds[0].getHeader()).isNotNull();
 		byte[] udh = uds[0].getHeader();
-		assertThat(udh.length).isEqualTo(6);
+		assertThat(udh).hasSize(6);
 		assertThat(udh[0]).isEqualTo((byte) 0x05);
 		assertThat(udh[1]).isEqualTo((byte) 0x00);
 		assertThat(udh[2]).isEqualTo((byte) 0x03);
@@ -87,12 +89,12 @@ class TextMessageUserDataFactoryTest {
 
 		// TODO: Assert body contents
 		assertThat(uds[0].isBodyBinary()).isTrue();
-		assertThat(uds[0].getBinaryBody().length).isLessThanOrEqualTo(9);
+		assertThat(uds[0].getBinaryBody()).hasSizeLessThanOrEqualTo(9);
 		// assertThat(uds[0].getBinaryBody()).isEqualTo(new byte[] { });
 
 		assertThat(uds[1].getHeader()).isNotNull();
 		udh = uds[1].getHeader();
-		assertThat(udh.length).isEqualTo(6);
+		assertThat(udh).hasSize(6);
 		assertThat(udh[0]).isEqualTo((byte) 0x05);
 		assertThat(udh[1]).isEqualTo((byte) 0x00);
 		assertThat(udh[2]).isEqualTo((byte) 0x03);
@@ -101,7 +103,7 @@ class TextMessageUserDataFactoryTest {
 		assertThat(udh[5]).isEqualTo((byte) 0x02); // part's number in the sequence
 		// TODO: Assert body contents
 		assertThat(uds[1].isBodyBinary()).isTrue();
-		assertThat(uds[1].getBinaryBody().length).isLessThanOrEqualTo(9);
+		assertThat(uds[1].getBinaryBody()).hasSizeLessThanOrEqualTo(9);
 		// assertThat(uds[1].getBinaryBody()).isEqualTo(new byte[] { });
 	}
 
@@ -110,7 +112,7 @@ class TextMessageUserDataFactoryTest {
 		final String textMessage = "\u5B6B\u5B50\u5175\u6CD5 \u8A08\u7BC7\u7B2C\u4E00 \u5B6B\u5B50\u66F0\uFF1A\u5175\u8005\uFF0C\u570B\u4E4B\u5927\u4E8B\uFF0C\u6B7B\u751F\u4E4B\u5730\uFF0C\u5B58\u4EA1\u4E4B\u9053\uFF0C\u4E0D\u53EF\u4E0D\u5BDF\u4E5F\u3002\u6545\u7D93\u4E4B\u4EE5\u4E94\uFF0C\u6821\u4E4B\u4EE5\u8A08\uFF0C\u800C\u7D22\u5176\u60C5\uFF1A\u4E00\u66F0\u9053\uFF0C\u4E8C\u66F0\u5929\uFF0C\u4E09\u66F0\u5730\uFF0C\u56DB\u66F0 \u5C07\uFF0C\u4E94\u66F0\u6CD5\u3002\u9053\u8005\uFF0C\u4EE4\u6C11\u4E8E\u4E0A\u540C\u610F\u8005\u4E5F\uFF0C\u53EF\u8207\u4E4B\u6B7B\uFF0C\u53EF\u8207\u4E4B\u751F\uFF0C\u6C11\u4E0D \u8A6D\u4E5F\u3002\u5929\u8005\uFF0C\u9670\u967D\u3001\u5BD2\u6691\u3001\u6642\u5236\u4E5F\u3002\u5730\u8005\uFF0C\u9AD8\u4E0B\u3001\u9060\u8FD1\u3001\u96AA\u6613\u3001\u5EE3\u72F9 \u3001\u6B7B\u751F\u4E5F\u3002\u5C07\u8005\uFF0C\u667A\u3001\u4FE1\u3001\u4EC1\u3001\u52C7\u3001\u56B4\u4E5F\u3002\u6CD5\u8005\uFF0C\u66F2\u5236\u3001\u5B98\u9053\u3001\u4E3B\u7528 \u4E5F\u3002\u51E1\u6B64\u4E94\u8005\uFF0C\u5C07\u83AB\u4E0D\u805E\uFF0C\u77E5\u4E4B\u8005\u52DD\uFF0C\u4E0D\u77E5\u4E4B\u8005\u4E0D\u52DD\u3002\u6545\u6821\u4E4B\u4EE5\u8A08\uFF0C \u800C\u7D22\u5176\u60C5\u3002\u66F0\uFF1A\u4E3B\u5B70\u6709\u9053\uFF1F\u5C07\u5B70\u6709\u80FD\uFF1F\u5929\u5730\u5B70\u5F97\uFF1F\u6CD5\u4EE4\u5B70\u884C\uFF1F\u5175\u773E\u5B70 \u5F37\uFF1F\u58EB\u5352\u5B70\u7DF4\uFF1F\u8CDE\u7F70\u5B70\u660E\uFF1F\u543E\u4EE5\u6B64\u77E5\u52DD\u8CA0\u77E3\u3002";
 		final UserData[] uds = TextMessageUserDataFactory.newInstance(textMessage, 140);
 
-		assertThat(uds.length).isEqualTo(4);
+		assertThat(uds).hasSize(4);
 	}
 
 	@Test

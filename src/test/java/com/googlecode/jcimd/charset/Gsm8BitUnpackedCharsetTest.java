@@ -25,14 +25,14 @@ import java.nio.charset.CharsetEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class Gsm8BitUnpackedCharsetTest {
+class Gsm8BitUnpackedCharsetTest {
 
 	private Charset charset;
 	private CharsetDecoder decoder;
 	private CharsetEncoder encoder;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		charset = Charset.forName("GSM-8BIT");
 		decoder = charset.newDecoder();
 		encoder = charset.newEncoder();

@@ -123,9 +123,7 @@ public class DummyCimdServer {
 						// fixed to be 50 more than the operation code of
 						// the request packet. The packet number is the
 						// same as the request message.
-						case Packet.OP_LOGIN:
-						case Packet.OP_LOGOUT:
-						case Packet.OP_ALIVE:
+						case Packet.OP_LOGIN, Packet.OP_LOGOUT, Packet.OP_ALIVE:
 							response = new Packet(
 								request.getOperationCode() + 50,
 								request.getSequenceNumber());
