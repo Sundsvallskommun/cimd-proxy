@@ -27,17 +27,17 @@ import java.nio.charset.CoderResult;
  */
 public class Gsm7BitPackedCharset extends Charset {
 
-	private final char[] BYTE_TO_CHAR;
-	private final char[] BYTE_TO_ESCAPED_CHAR;
-	private final int[] CHAR_TO_BYTE;
+	private final char[] byteToChar;
+	private final char[] byteToEscapedChar;
+	private final int[] charToByte;
 
 	protected Gsm7BitPackedCharset(
 		String canonicalName, String[] aliases,
 		char[] byteToChar, int[] charToByte, char[] byteToEscapedChar) {
 		super(canonicalName, aliases);
-		this.BYTE_TO_CHAR = byteToChar;
-		this.CHAR_TO_BYTE = charToByte;
-		this.BYTE_TO_ESCAPED_CHAR = byteToEscapedChar;
+		this.byteToChar = byteToChar;
+		this.charToByte = charToByte;
+		this.byteToEscapedChar = byteToEscapedChar;
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class Gsm7BitPackedCharset extends Charset {
 		}
 
 		private CoderResult encodeCharacter(char ch, ByteBuffer out) {
-			int b = CHAR_TO_BYTE[ch];
+			int b = charToByte[ch];
 			if (b == GsmCharsetProvider.NO_GSM_BYTE) {
 				// If ch does not map to a GSM character, replace with a '?'
 				b = '?';
@@ -140,17 +140,17 @@ public class Gsm7BitPackedCharset extends Charset {
 					int i = data & 0x7F;
 					if (i != GsmCharsetProvider.ESCAPE) {
 						if (escaped) {
-							char escapedChar = BYTE_TO_ESCAPED_CHAR[i];
+							char escapedChar = byteToEscapedChar[i];
 							if (escapedChar != GsmCharsetProvider.NO_GSM_BYTE) {
 								out.put(escapedChar);
 							} else {
 								// If invalid escape sequence use SPACE
 								out.put(' ');
-								out.put(BYTE_TO_CHAR[i]);
+								out.put(byteToChar[i]);
 							}
 							escaped = false;
 						} else {
-							out.put(BYTE_TO_CHAR[i]);
+							out.put(byteToChar[i]);
 						}
 					} else {
 						escaped = true;
@@ -166,11 +166,10 @@ public class Gsm7BitPackedCharset extends Charset {
 		@Override
 		protected CoderResult implFlush(CharBuffer out) {
 			int pos = out.position();
-			if (pos > 0 && (pos % 8 == 0)) {
+			if ((pos > 0 && (pos % 8 == 0)) && (out.get(pos - 1) == '@')) {
 				// this fixes an ambiguity bug in the specification
 				// where the last of 8 packed bytes is 0
-				if (out.get(pos - 1) == '@')
-					out.position(pos - 1);
+				out.position(pos - 1);
 			}
 			return CoderResult.UNDERFLOW;
 		}

@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.spi.CharsetProvider;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,14 +55,11 @@ public class GsmCharsetProvider extends CharsetProvider {
 		try {
 			Arrays.fill(BYTE_TO_CHAR_ESCAPED_DEFAULT, NO_GSM_BYTE);
 			Arrays.fill(CHAR_TO_BYTE_SMALL_C_CEDILLA, NO_GSM_BYTE);
-			BufferedReader reader = new BufferedReader(
+			try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(
 					Gsm7BitPackedCharset.class.getResourceAsStream("GSM0338.TXT"),
-					Charset.forName("US-ASCII")));
-			try {
+					StandardCharsets.US_ASCII))) {
 				init(reader);
-			} finally {
-				reader.close();
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(
@@ -118,8 +116,8 @@ public class GsmCharsetProvider extends CharsetProvider {
 		return count;
 	}
 
-	private static final List<Charset> charsets = new ArrayList<Charset>();
-	private static final Map<String, Charset> charsetsMap = new HashMap<String, Charset>();
+	private static final List<Charset> charsets = new ArrayList<>();
+	private static final Map<String, Charset> charsetsMap = new HashMap<>();
 
 	static {
 		Charset[] charsets = new Charset[] {
@@ -180,7 +178,8 @@ public class GsmCharsetProvider extends CharsetProvider {
 	 */
 	public static int countGsm7BitCharacterBytes(CharSequence s) {
 		int length = s.length();
-		int totalBits = 0, bits = 0;
+		int totalBits = 0;
+		int bits = 0;
 		for (int i = 0; i < length; i++) {
 			bits = countGsm7BitCharacterBits(s.charAt(i));
 			if (bits < 0) {

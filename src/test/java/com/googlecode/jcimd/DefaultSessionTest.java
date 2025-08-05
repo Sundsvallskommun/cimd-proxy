@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test;
 class DefaultSessionTest {
 
 	private static DummyCimdServer server;
-	private static final int port = 9971;
-	private static final String host = "localhost";
+	private static final int PORT = 9971;
+	private static final String HOST = "localhost";
 
 	private final String username = "user01";
 	private final String password = "seCreT";
@@ -37,7 +37,7 @@ class DefaultSessionTest {
 
 	@BeforeAll
 	static void setUpCimd2Server() throws Exception {
-		server = new DummyCimdServer(port);
+		server = new DummyCimdServer(PORT);
 		server.start();
 	}
 
@@ -49,7 +49,7 @@ class DefaultSessionTest {
 	@BeforeEach
 	void setUp() {
 		connectionFactory = new TcpNetConnectionFactory(
-			host, port, username, password);
+			HOST, PORT, username, password);
 	}
 
 	@AfterEach

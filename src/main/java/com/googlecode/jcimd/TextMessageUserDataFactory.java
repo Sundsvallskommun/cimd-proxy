@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Random;
 import org.apache.commons.logging.Log;
@@ -40,8 +41,10 @@ import org.apache.commons.logging.LogFactory;
 public class TextMessageUserDataFactory {
 
 	private static final Log logger = LogFactory.getLog(TextMessageUserDataFactory.class);
-	private static final Charset UTF16BE = Charset.forName("UTF-16BE");
+	private static final Charset UTF16BE = StandardCharsets.UTF_16BE;
 	private static final Charset GSM = loadGsmCharset();
+
+	private TextMessageUserDataFactory() {}
 
 	private static Charset loadGsmCharset() {
 		try {
@@ -90,7 +93,7 @@ public class TextMessageUserDataFactory {
 	}
 
 	private static byte nextRandom() {
-		byte bytes[] = {
+		byte[] bytes = {
 			0x00
 		};
 		new Random().nextBytes(bytes);
@@ -139,7 +142,8 @@ public class TextMessageUserDataFactory {
 				(byte) (numberOfParts & 0xff), 0x00
 			};
 			if (noNonGsmCharacters) {
-				int i = 0, part = 0;
+				int i = 0;
+				int part = 0;
 				StringBuilder textMessagePart = new StringBuilder();
 				while (i < textMessage.length()) {
 					int textMessagePartBits = 0;
@@ -168,7 +172,8 @@ public class TextMessageUserDataFactory {
 						encodeAs(GSM, textMessagePartString), udh, 0x00);
 				}
 			} else {
-				int i = 0, part = 0;
+				int i = 0;
+				int part = 0;
 				StringBuilder textMessagePart = new StringBuilder();
 				while (i < textMessage.length()) {
 					textMessagePart.setLength(0);
