@@ -1,5 +1,8 @@
 package se.sundsvall.cimdproxy.cimd;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static se.sundsvall.dept44.util.LogUtils.sanitizeForLogging;
+
 import com.googlecode.jcimd.Packet;
 import com.googlecode.jcimd.Parameter;
 import io.netty.channel.ChannelHandler;
@@ -7,7 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.sundsvall.cimdproxy.cimd.util.SessionUtil;
@@ -33,7 +35,7 @@ public class CIMDAdapter extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(final ChannelHandlerContext ctx, final Object msg) {
 		final var request = (Packet) msg;
-		LOG.debug("Session [{}] - received packet: {}", session, request);
+		LOG.debug("Session [{}] - received packet: {}", session, sanitizeForLogging(String.valueOf(request)));
 
 		Packet response;
 
@@ -42,7 +44,7 @@ public class CIMDAdapter extends ChannelInboundHandlerAdapter {
 				response = new Packet(request.getOperationCode() + 50, request.getSequenceNumber());
 				for (final Parameter parameter : request.getParameters()) {
 					if (parameter.getNumber() == Parameter.USER_IDENTITY) {
-						LOG.info("Session [{}] - user: {}", session, StringUtils.isNotBlank(parameter.getValue()) ? parameter.getValue() : "<empty>");
+						LOG.info("Session [{}] - user: {}", session, isNotBlank(parameter.getValue()) ? parameter.getValue() : "<empty>");
 						SessionUtil.setUserId(session, parameter.getValue());
 						break;
 					}
@@ -58,7 +60,7 @@ public class CIMDAdapter extends ChannelInboundHandlerAdapter {
 				// Message from application to SMSC
 				final var cimdPacket = new CIMDPacket(request);
 				if (cimdPacket.getDestinationAddress() == null) {
-					LOG.error("Session [{}] - missing destination parameter: {}", session, request);
+					LOG.error("Session [{}] - missing destination parameter: {}", session, sanitizeForLogging(String.valueOf(request)));
 					return;
 				}
 				LOG.info("Session [{}] - received message with destination address {}: {}",
@@ -86,7 +88,7 @@ public class CIMDAdapter extends ChannelInboundHandlerAdapter {
 			}
 			default -> {
 				response = new Packet(Packet.OP_GENERAL_ERROR_RESPONSE);
-				LOG.error("Session [{}] - no handler for CIMD operation: {}", session, request);
+				LOG.error("Session [{}] - no handler for CIMD operation: {}", session, sanitizeForLogging(String.valueOf(request)));
 			}
 		}
 

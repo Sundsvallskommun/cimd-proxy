@@ -1,5 +1,7 @@
 package se.sundsvall.cimdproxy.integration.smssender;
 
+import static java.lang.Boolean.TRUE;
+
 import generated.se.sundsvall.smssender.SendSmsRequest;
 import generated.se.sundsvall.smssender.Sender;
 import org.slf4j.Logger;
@@ -33,15 +35,15 @@ public class SmsSenderIntegration {
 
 			var result = client.sendSms(properties.municipalityId(), request);
 
-			if (Boolean.TRUE.equals(result.getSent())) {
+			if (TRUE.equals(result.getSent())) {
 				LOG.info("SMS sent");
-			} else {
-				LOG.info("Unable to send SMS");
+				return true;
 			}
-			return result.getSent();
+
+			LOG.info("Unable to send SMS");
+			return false;
 		} catch (Exception e) {
 			LOG.warn("Unable to send SMS", e);
-
 			return false;
 		}
 	}
