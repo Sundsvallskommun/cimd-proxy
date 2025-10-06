@@ -42,7 +42,7 @@ class SmsSenderIntegrationTests {
 		when(mockSmsSenderClient.sendSms(anyString(), any(SendSmsRequest.class)))
 			.thenReturn(new SendSmsResponse().sent(true));
 
-		var result = smsSenderIntegration.sendSms("0701234567", "someMessage");
+		var result = smsSenderIntegration.sendSms("0701740605", "someMessage");
 		assertThat(result).isTrue();
 
 		verify(mockSms, times(1)).from();
@@ -54,7 +54,7 @@ class SmsSenderIntegrationTests {
 		when(mockSmsSenderClient.sendSms(anyString(), any(SendSmsRequest.class)))
 			.thenReturn(new SendSmsResponse().sent(false));
 
-		var result = smsSenderIntegration.sendSms("0701234567", "someMessage");
+		var result = smsSenderIntegration.sendSms("0701740605", "someMessage");
 		assertThat(result).isFalse();
 
 		verify(mockSms, times(1)).from();
@@ -66,7 +66,7 @@ class SmsSenderIntegrationTests {
 		when(mockSmsSenderClient.sendSms(anyString(), any(SendSmsRequest.class)))
 			.thenThrow(new RuntimeException("dummy"));
 
-		var result = smsSenderIntegration.sendSms("0701234567", "someMessage");
+		var result = smsSenderIntegration.sendSms("0701740605", "someMessage");
 		assertThat(result).isFalse();
 
 		verify(mockSms, times(1)).from();
