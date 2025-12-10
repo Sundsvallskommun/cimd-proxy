@@ -28,6 +28,7 @@ public class SmsSenderIntegration {
 	public boolean sendSms(final String destinationNumber, final String message) {
 		try {
 			var request = new SendSmsRequest()
+				.priority(SendSmsRequest.PriorityEnum.HIGH)
 				.sender(new Sender()
 					.name(properties.sms().from()))
 				.mobileNumber(destinationNumber)
