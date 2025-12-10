@@ -39,8 +39,8 @@ public class TestClient {
 	private final AtomicBoolean opened = new AtomicBoolean(false);
 	private Session session;
 
-	private List<Packet> sentPackets = new LinkedList<>();
-	private List<Packet> receivedPackets = new LinkedList<>();
+	private final List<Packet> sentPackets = new LinkedList<>();
+	private final List<Packet> receivedPackets = new LinkedList<>();
 
 	public TestClient(final String remoteHost, final int remotePort) throws InterruptedException {
 		if (opened.compareAndSet(false, true)) {

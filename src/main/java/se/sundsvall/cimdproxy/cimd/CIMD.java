@@ -35,8 +35,8 @@ public class CIMD implements DisposableBean {
 	private final boolean useCimdChecksum;
 	private final SslContext sslContext;
 
-	private final NioEventLoopGroup parentEventLoopGroup = new NioEventLoopGroup();
-	private final NioEventLoopGroup clientEventLoopGroup = new NioEventLoopGroup();
+	private final NioEventLoopGroup parentEventLoopGroup = new NioEventLoopGroup(25);
+	private final NioEventLoopGroup clientEventLoopGroup = new NioEventLoopGroup(25);
 
 	private ChannelFuture channelFuture;
 

@@ -13,7 +13,7 @@
 						"name": "mguard-it-test"
 					},
 					"mobileNumber": "+4670222222",
-					"priority": "NORMAL",
+					"priority": "HIGH",
 					"message": "Hello, there!!"
 				}
 			}
