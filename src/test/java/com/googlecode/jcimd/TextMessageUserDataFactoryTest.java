@@ -15,8 +15,6 @@
  */
 package com.googlecode.jcimd;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
@@ -24,6 +22,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TextMessageUserDataFactoryTest {
 

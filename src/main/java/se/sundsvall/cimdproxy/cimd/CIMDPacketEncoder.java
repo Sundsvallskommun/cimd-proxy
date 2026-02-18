@@ -1,14 +1,14 @@
 package se.sundsvall.cimdproxy.cimd;
 
-import static com.googlecode.jcimd.PacketSerializer.serializePacket;
-import static se.sundsvall.cimdproxy.cimd.util.SessionUtil.getPacketSequenceNumberGenerator;
-
 import com.googlecode.jcimd.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import se.sundsvall.cimdproxy.cimd.util.SessionUtil;
+
+import static com.googlecode.jcimd.PacketSerializer.serializePacket;
+import static se.sundsvall.cimdproxy.cimd.util.SessionUtil.getPacketSequenceNumberGenerator;
 
 /**
  * CIMD packet encoder.

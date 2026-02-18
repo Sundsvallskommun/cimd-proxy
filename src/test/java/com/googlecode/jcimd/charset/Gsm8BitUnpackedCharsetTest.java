@@ -15,8 +15,6 @@
  */
 package com.googlecode.jcimd.charset;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -24,6 +22,8 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class Gsm8BitUnpackedCharsetTest {
 

@@ -1,7 +1,5 @@
 package se.sundsvall.cimdproxy.cimd;
 
-import static java.util.Objects.isNull;
-
 import com.googlecode.jcimd.Packet;
 import com.googlecode.jcimd.Parameter;
 import com.googlecode.jcimd.charset.GsmCharsetProvider;
@@ -14,6 +12,8 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.isNull;
 
 public class CIMDPacket {
 

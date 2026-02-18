@@ -1,8 +1,5 @@
 package se.sundsvall.cimdproxy.cimd;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static se.sundsvall.dept44.util.LogUtils.sanitizeForLogging;
-
 import com.googlecode.jcimd.Packet;
 import com.googlecode.jcimd.Parameter;
 import io.netty.channel.ChannelHandler;
@@ -13,6 +10,9 @@ import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.sundsvall.cimdproxy.cimd.util.SessionUtil;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static se.sundsvall.dept44.util.LogUtils.sanitizeForLogging;
 
 /**
  * CIMD protocol adapter.
