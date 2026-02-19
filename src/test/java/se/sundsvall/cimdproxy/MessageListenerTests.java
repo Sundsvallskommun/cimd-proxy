@@ -1,11 +1,5 @@
 package se.sundsvall.cimdproxy;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +9,12 @@ import se.sundsvall.cimdproxy.cimd.CIMD;
 import se.sundsvall.cimdproxy.cimd.CIMDMessage;
 import se.sundsvall.cimdproxy.cimd.CIMDMessageListener;
 import se.sundsvall.cimdproxy.integration.smssender.SmsSenderIntegration;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MessageListenerTests {
