@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class CIMDAdapter extends ChannelInboundHandlerAdapter {
 					response = new Packet(request.getOperationCode() + 50,
 						request.getSequenceNumber(),
 						new Parameter(Parameter.DESTINATION_ADDRESS, cimdPacket.getDestinationAddress()),
-						new Parameter(Parameter.MC_TIMESTAMP, DATE_TIME_FORMATTER.format(LocalDateTime.now())));
+						new Parameter(Parameter.MC_TIMESTAMP, DATE_TIME_FORMATTER.format(LocalDateTime.now(ZoneId.systemDefault()))));
 				} else {
 					response = new Packet(request.getOperationCode() + 50,
 						request.getSequenceNumber(),
