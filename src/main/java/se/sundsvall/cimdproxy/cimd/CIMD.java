@@ -31,7 +31,6 @@ public class CIMD implements DisposableBean {
 	static final String CLIENT_BUNDLE_NAME = "client";
 
 	private final int port;
-	private final boolean sslEnabled;
 	private final boolean useCimdChecksum;
 	private final SslContext sslContext;
 
@@ -42,8 +41,9 @@ public class CIMD implements DisposableBean {
 
 	CIMD(final CIMDProperties properties, final SslBundles sslBundles) throws SSLException {
 		port = properties.port();
-		sslEnabled = properties.ssl().enabled();
 		useCimdChecksum = properties.useCimdChecksum();
+
+		final var sslEnabled = properties.ssl().enabled();
 
 		if (sslEnabled && sslBundles.getBundleNames().contains(SERVER_BUNDLE_NAME)) {
 			var sslServerBundle = sslBundles.getBundle(SERVER_BUNDLE_NAME);
@@ -52,7 +52,7 @@ public class CIMD implements DisposableBean {
 			if (sslBundles.getBundleNames().contains(CLIENT_BUNDLE_NAME)) {
 				var sslClientBundle = sslBundles.getBundle(CLIENT_BUNDLE_NAME);
 
-				// Assume Client certificate authentication (two-way SSL) when trustedCert is set
+				// Assume Client certificate authentication (two-way SSL) when a client SSL bundle is present
 				// Verify with cmd "openssl s_client -cert <cert-file> -key <key-file> -showcerts -connect <address>"
 				// For self-signed certs add flag -CAfile <cert-file>
 				LOG.info("Only accepting trusted clients present in truststore (two-way SSL)");
@@ -62,11 +62,16 @@ public class CIMD implements DisposableBean {
 			} else {
 				// Verify with cmd "openssl s_client -showcerts -connect <address>"
 				// For self-signed certs add flag -CAfile <cert-file>
+				LOG.info("No '{}' SSL bundle configured - not verifying client certificates (one-way SSL)", CLIENT_BUNDLE_NAME);
 				sslContextBuilder.clientAuth(ClientAuth.NONE);
 			}
 
 			sslContext = sslContextBuilder.build();
 		} else {
+			if (sslEnabled) {
+				LOG.warn("SSL is enabled but no '{}' SSL bundle is configured - CIMD will accept PLAINTEXT connections", SERVER_BUNDLE_NAME);
+			}
+
 			sslContext = null;
 		}
 	}
@@ -97,8 +102,8 @@ public class CIMD implements DisposableBean {
 				.bind(port)
 				.sync();
 
-			LOG.info("CIMD listening on port {}{}", port, sslEnabled ? " (using SSL)" : "");
-		} catch (final InterruptedException interruptedException) {
+			LOG.info("CIMD listening on port {} ({})", port, sslContext != null ? "TLS" : "plaintext");
+		} catch (final InterruptedException _) {
 			Thread.currentThread().interrupt();
 		} catch (final Exception e) {
 			LOG.error("Unable to start CIMD", e);
