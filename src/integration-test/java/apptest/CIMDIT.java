@@ -43,8 +43,10 @@ class CIMDIT extends AbstractAppTest {
 		// Send a message
 		testClient.send("+4670111111", "Hello, there!!");
 
-		// Verify that all configured stubs have been called
-		call.sendRequestAndVerifyResponse();
+		// Wait for the CIMD response to reach the test client, then verify that all configured stubs have been called
+		call.sendRequest()
+			.andVerifyThat(() -> !testClient.getReceivedPackets().isEmpty())
+			.verifyStubs();
 
 		// Verify that the test client has gotten the expected response
 		assertThat(testClient).hasSuccessResponse();
@@ -63,8 +65,10 @@ class CIMDIT extends AbstractAppTest {
 		// Send a message
 		testClient.send("+4670222222", "Hello, there!!");
 
-		// Verify that all configured stubs have been called
-		call.sendRequestAndVerifyResponse();
+		// Wait for the CIMD response to reach the test client, then verify that all configured stubs have been called
+		call.sendRequest()
+			.andVerifyThat(() -> !testClient.getReceivedPackets().isEmpty())
+			.verifyStubs();
 
 		// Verify that the test client has gotten the expected response
 		assertThat(testClient).hasFailureResponse();

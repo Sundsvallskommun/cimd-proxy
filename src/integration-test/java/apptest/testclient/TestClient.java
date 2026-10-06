@@ -23,6 +23,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class TestClient {
 	private Session session;
 
 	private final List<Packet> sentPackets = new LinkedList<>();
-	private final List<Packet> receivedPackets = new LinkedList<>();
+	private final List<Packet> receivedPackets = new CopyOnWriteArrayList<>();
 
 	public TestClient(final String remoteHost, final int remotePort) throws InterruptedException {
 		if (opened.compareAndSet(false, true)) {
