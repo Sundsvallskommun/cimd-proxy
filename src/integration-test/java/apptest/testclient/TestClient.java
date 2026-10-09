@@ -1,13 +1,5 @@
 package apptest.testclient;
 
-import static com.googlecode.jcimd.Packet.OP_SUBMIT_MESSAGE;
-import static com.googlecode.jcimd.Parameter.DATA_CODING_SCHEME;
-import static com.googlecode.jcimd.Parameter.DESTINATION_ADDRESS;
-import static com.googlecode.jcimd.Parameter.USER_DATA;
-import static com.googlecode.jcimd.Parameter.USER_DATA_BINARY;
-import static com.googlecode.jcimd.Parameter.USER_DATA_HEADER;
-import static se.sundsvall.dept44.util.LogUtils.sanitizeForLogging;
-
 import com.googlecode.jcimd.Packet;
 import com.googlecode.jcimd.Parameter;
 import com.googlecode.jcimd.StringUserData;
@@ -31,6 +23,14 @@ import se.sundsvall.cimdproxy.cimd.CIMDPacketDecoder;
 import se.sundsvall.cimdproxy.cimd.CIMDPacketEncoder;
 import se.sundsvall.cimdproxy.cimd.Session;
 import se.sundsvall.cimdproxy.cimd.util.SessionUtil;
+
+import static com.googlecode.jcimd.Packet.OP_SUBMIT_MESSAGE;
+import static com.googlecode.jcimd.Parameter.DATA_CODING_SCHEME;
+import static com.googlecode.jcimd.Parameter.DESTINATION_ADDRESS;
+import static com.googlecode.jcimd.Parameter.USER_DATA;
+import static com.googlecode.jcimd.Parameter.USER_DATA_BINARY;
+import static com.googlecode.jcimd.Parameter.USER_DATA_HEADER;
+import static se.sundsvall.dept44.util.LogUtils.sanitizeForLogging;
 
 public class TestClient {
 
