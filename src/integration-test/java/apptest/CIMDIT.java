@@ -1,9 +1,5 @@
 package apptest;
 
-import static apptest.testclient.TestClientAssertions.assertThat;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 import apptest.testclient.TestClient;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -15,6 +11,10 @@ import org.springframework.test.util.TestSocketUtils;
 import se.sundsvall.cimdproxy.Application;
 import se.sundsvall.dept44.test.AbstractAppTest;
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
+
+import static apptest.testclient.TestClientAssertions.assertThat;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ActiveProfiles("it")
 @WireMockAppTestSuite(files = "classpath:/CIMDIT/", classes = Application.class)
